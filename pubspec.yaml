@@ -37,6 +37,7 @@ dependencies:
   fluttertoast: 8.1.1
   http: ^0.13.5
   device_info_plus: ^8.1.0
+  bubble: ^1.2.1
 
 dev_dependencies:
   flutter_test:
