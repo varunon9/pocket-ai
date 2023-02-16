@@ -29,6 +29,13 @@
             {
               "client_id": "721163609851-bv887l5h4bcdlfkj50qkp0viiitd8asg.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "721163609851-dsro3vr8ja7fktjr5gs47kokt96kh1c1.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.pocketAi"
+              }
             }
           ]
         }
