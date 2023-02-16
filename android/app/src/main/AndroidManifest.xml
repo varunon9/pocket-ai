@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.pocket_ai">
+    package="me.varunon9.pocket_ai">
    <application
         android:label="pocket_ai"
         android:name="${applicationName}"

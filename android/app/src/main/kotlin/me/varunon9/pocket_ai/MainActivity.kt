@@ -1,4 +1,4 @@
-package com.example.pocket_ai
+package me.varunon9.pocket_ai
 
 import io.flutter.embedding.android.FlutterActivity
 

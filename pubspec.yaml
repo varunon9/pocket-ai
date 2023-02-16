@@ -1,5 +1,5 @@
 name: pocket_ai
-description: A new Flutter project.
+description: OpenAI GPT-3 powered Free Chat Bot
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -49,6 +49,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
+  change_app_package_name: ^1.1.0
+  flutter_launcher_icons: ^0.11.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -91,3 +93,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  
+flutter_icons:
+  android: "ic_launcher"
+  ios: true
+  image_path: "assets/images/ic_launcher.png"
+  min_sdk_android: 21 # android min sdk min:16, default 21 

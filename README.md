@@ -30,6 +30,13 @@ Flutter setup: https://docs.flutter.dev/get-started/install/macos
 9. Build release apk `flutter build apk`
 10. Generate upload key in android/app `keytool -genkey -v -keystore upload-keystore.jks -keyalg RSA -keysize 2048 -validity 10000 -alias upload -storetype JKS`
 11. Check fingerprint `keytool -list -v -keystore ./android/app/upload-keystore.jks -alias upload`
-12. Change package name `flutter pub run change_app_package_name:main in.giftwallet.business`
-13. Update launcher icon `flutter pub run flutter_launcher_icons:main`
+12. Change package name `flutter pub add -d change_app_package_name` && `flutter pub run change_app_package_name:main me.varunon9.pocket_ai`
+13. Update launcher icon `flutter pub add -d flutter_launcher_icons` && `flutter pub run flutter_launcher_icons:main`
 14. Build releas bundle `flutter build appbundle`
+
+## Documentation & Resources-
+
+1. Update launcher icon: https://pub.dev/packages/flutter_launcher_icons
+2. Integrate Firebase: https://firebase.google.com/docs/flutter/setup?platform=ios
+3. Firebase Analytics: https://firebase.google.com/docs/analytics/get-started?platform=flutter
+4. Firebase Crashlytics: https://firebase.google.com/docs/crashlytics/get-started?platform=flutter
