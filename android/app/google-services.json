@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "721163609851",
+    "project_id": "pocket-ai-dc7da",
+    "storage_bucket": "pocket-ai-dc7da.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:721163609851:android:e617bdc07bb11a5270f25e",
+        "android_client_info": {
+          "package_name": "me.varunon9.pocket_ai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "721163609851-bv887l5h4bcdlfkj50qkp0viiitd8asg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDH0txeQAy0LKamWXH-mn8_8CDAj9DlScg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "721163609851-bv887l5h4bcdlfkj50qkp0viiitd8asg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
