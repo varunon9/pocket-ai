@@ -40,8 +40,16 @@ Flutter setup: https://docs.flutter.dev/get-started/install/macos
 2. Integrate Firebase: https://firebase.google.com/docs/flutter/setup?platform=ios
 3. Firebase Analytics: https://firebase.google.com/docs/analytics/get-started?platform=flutter
 4. Firebase Crashlytics: https://firebase.google.com/docs/crashlytics/get-started?platform=flutter
+5. Release android app: https://docs.flutter.dev/deployment/android
 
 ## Use your own Firebase project
 
 1. Login to firebase: `firebase login`
 2. Select project: `flutterfire configure`
+
+## How to get your Open AI API key
+
+1. Signup https://beta.openai.com/signup
+2. Visit https://beta.openai.com/account/api-keys and create free API key ($18 credit for 3 months)
+3. Check API key usage: https://platform.openai.com/account/usage
+4. Setup usage limits: https://platform.openai.com/account/billing/limits

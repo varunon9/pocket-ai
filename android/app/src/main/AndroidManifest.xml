@@ -1,5 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.varunon9.pocket_ai">
+    <uses-permission android:name="android.permission.INTERNET" />
    <application
         android:label="pocket_ai"
         android:name="${applicationName}"
