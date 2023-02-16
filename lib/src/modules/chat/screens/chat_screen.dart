@@ -25,6 +25,7 @@ class _ChatScreen extends State<ChatScreen> {
   bool apiCallInProgress = false;
 
   TextEditingController userMessageController = TextEditingController();
+  ScrollController listViewontroller = ScrollController();
 
   void onSendPress() {
     String userMessage = userMessageController.text;
@@ -36,6 +37,7 @@ class _ChatScreen extends State<ChatScreen> {
       apiCallInProgress = true;
     });
     userMessageController.text = '';
+    listViewontroller.jumpTo(listViewontroller.position.maxScrollExtent);
     getResponseFromOpenAi(userMessage).then((response) {
       String botMessage = '${response['choices'][0]['text']}';
       setState(() {
@@ -74,24 +76,27 @@ class _ChatScreen extends State<ChatScreen> {
                 icon: const Icon(Icons.settings))
           ]),
       body: Stack(children: [
-        ListView.builder(
-            itemCount: chatMessages.length + 1,
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemBuilder: (context, index) {
-              if (index == chatMessages.length) {
-                // todo show typing indicator when loading
-                return Container();
-              }
-              var chatItem = chatMessages[index];
-              return Bubble(
-                  nip: chatItem.bot ? BubbleNip.leftTop : BubbleNip.rightTop,
-                  margin: const BubbleEdges.only(top: 16, left: 8, right: 16),
-                  color: chatItem.bot ? Colors.white : CustomColors.lightText,
-                  alignment:
-                      chatItem.bot ? Alignment.topLeft : Alignment.topRight,
-                  child: CustomText(chatItem.message));
-            }),
+        Container(
+            margin: const EdgeInsets.only(bottom: 72),
+            child: ListView.builder(
+                controller: listViewontroller,
+                itemCount: chatMessages.length,
+                shrinkWrap: true,
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.only(top: 12, bottom: 12),
+                itemBuilder: (context, index) {
+                  var chatItem = chatMessages[index];
+                  return Bubble(
+                      nip:
+                          chatItem.bot ? BubbleNip.leftTop : BubbleNip.rightTop,
+                      margin:
+                          const BubbleEdges.only(top: 16, left: 8, right: 16),
+                      color:
+                          chatItem.bot ? Colors.white : CustomColors.lightText,
+                      alignment:
+                          chatItem.bot ? Alignment.topLeft : Alignment.topRight,
+                      child: CustomText(chatItem.message));
+                })),
         Align(
           alignment: Alignment.bottomLeft,
           child: Container(
@@ -105,6 +110,9 @@ class _ChatScreen extends State<ChatScreen> {
                       child: CustomTextFormField(
                           onChanged: (value) => {},
                           controller: userMessageController,
+                          minLines: 1,
+                          maxLines: 4,
+                          textInputType: TextInputType.multiline,
                           hintText: 'Ask anything to Pocket AI bot'),
                     ),
                   ),
@@ -113,11 +121,12 @@ class _ChatScreen extends State<ChatScreen> {
                       color: CustomColors.secondary,
                       shape: CircleBorder(),
                     ),
+                    width: 48,
+                    height: 48,
                     child: apiCallInProgress
-                        ? const SizedBox(
-                            child: CircularProgressIndicator(
-                            color: Colors.white,
-                          ))
+                        ? const CircularProgressIndicator(
+                            color: CustomColors.primary,
+                          )
                         : IconButton(
                             tooltip: 'Send',
                             onPressed: onSendPress,

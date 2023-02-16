@@ -9,6 +9,7 @@ class CustomTextFormField extends StatelessWidget {
   final TextEditingController? controller;
   final bool autofocus;
   final bool? enabled;
+  final int? minLines;
   final int? maxLines;
   final Color fillColor;
   final Widget? prefixIcon;
@@ -22,6 +23,7 @@ class CustomTextFormField extends StatelessWidget {
       this.controller,
       this.enabled,
       this.autofocus = false,
+      this.minLines,
       this.maxLines,
       this.fillColor = CustomColors.secondary,
       this.prefixIcon});
@@ -35,6 +37,7 @@ class CustomTextFormField extends StatelessWidget {
       controller: controller,
       autofocus: autofocus,
       enabled: enabled,
+      minLines: minLines,
       maxLines: maxLines,
       decoration: InputDecoration(
           prefixIcon: prefixIcon,
