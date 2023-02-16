@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pocket_ai/src/constants.dart';
 import 'package:pocket_ai/src/modules/chat/chat_actions.dart';
 import 'package:pocket_ai/src/modules/chat/models/chat_message.dart';
+import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/common.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
 import 'package:pocket_ai/src/widgets/custom_text.dart';
@@ -29,6 +30,11 @@ class _ChatScreen extends State<ChatScreen> {
 
   void onSendPress() {
     String userMessage = userMessageController.text;
+    if (userMessage.isEmpty) {
+      return;
+    }
+    logEvent(EventNames.ctaClicked,
+        {EventParams.ctaName: 'send', EventParams.userMessage: userMessage});
     setState(() {
       chatMessages = [
         ...chatMessages,
@@ -46,8 +52,10 @@ class _ChatScreen extends State<ChatScreen> {
           ChatMessage(message: botMessage, bot: true)
         ];
       });
+      logEvent(EventNames.openAiResponseSuccess, {});
     }).catchError((error) {
       logApiErrorAndShowMessage(context, exception: error);
+      logEvent(EventNames.openAiResponseFailed, {});
     }).then((value) {
       setState(() {
         apiCallInProgress = false;

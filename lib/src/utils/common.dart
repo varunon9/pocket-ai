@@ -4,6 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/api_exception.dart';
 import 'package:pocket_ai/src/widgets/custom_text.dart';
 
@@ -56,10 +57,12 @@ Future<String?> getDeviceId() async {
 
 void resetToScreen(BuildContext context, String routeName) {
   Navigator.of(context).popAndPushNamed(routeName);
+  logEvent(EventNames.navigation, {EventParams.routeName: routeName});
 }
 
 void navigateToScreen(BuildContext context, String routeName) {
   Navigator.pushNamed(context, routeName);
+  logEvent(EventNames.navigation, {EventParams.routeName: routeName});
 }
 
 bool canGoBack(BuildContext context) {
