@@ -42,7 +42,9 @@ Flutter setup: https://docs.flutter.dev/get-started/install/macos
 2. Integrate Firebase: https://firebase.google.com/docs/flutter/setup?platform=ios
 3. Firebase Analytics: https://firebase.google.com/docs/analytics/get-started?platform=flutter
 4. Firebase Crashlytics: https://firebase.google.com/docs/crashlytics/get-started?platform=flutter
-5. Release android app: https://docs.flutter.dev/deployment/android
+5. Firebase Firestore: https://firebase.google.com/docs/firestore/quickstart#dart
+6. Release android app: https://docs.flutter.dev/deployment/android
+7. OpenAI API docs: https://platform.openai.com/docs/introduction/overview
 
 ## Use your own Firebase project
 

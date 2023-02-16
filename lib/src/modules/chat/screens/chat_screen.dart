@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:pocket_ai/src/constants.dart';
 import 'package:pocket_ai/src/modules/chat/chat_actions.dart';
 import 'package:pocket_ai/src/modules/chat/models/chat_message.dart';
+import 'package:pocket_ai/src/modules/faqs/screens/faqs_screen.dart';
 import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/common.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
@@ -22,7 +23,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreen extends State<ChatScreen> {
   List<ChatMessage> chatMessages = [
-    ChatMessage(message: AIBotConstants.introMessage, bot: true)
+    ChatMessage(message: AiBotConstants.introMessage, bot: true)
   ];
   bool apiCallInProgress = false;
 
@@ -105,7 +106,9 @@ class _ChatScreen extends State<ChatScreen> {
           actions: <Widget>[
             IconButton(
                 tooltip: 'Help',
-                onPressed: (() {}),
+                onPressed: (() {
+                  navigateToScreen(context, FaqsScreen.routeName);
+                }),
                 icon: const Icon(Icons.help)),
             IconButton(
                 tooltip: 'Settings',

@@ -3,6 +3,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:pocket_ai/firebase_options.dart';
 import 'package:pocket_ai/src/modules/chat/screens/chat_screen.dart';
+import 'package:pocket_ai/src/modules/faqs/screens/faqs_screen.dart';
 import 'package:pocket_ai/src/modules/splash/screens/splash_screen.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
 
@@ -49,6 +50,7 @@ class MyApp extends StatelessWidget {
       routes: {
         SplashScreen.routeName: (context) => const SplashScreen(),
         ChatScreen.routeName: (context) => const ChatScreen(),
+        FaqsScreen.routeName: (context) => const FaqsScreen(),
       },
     );
   }
