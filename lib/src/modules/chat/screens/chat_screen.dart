@@ -25,6 +25,9 @@ class _ChatScreen extends State<ChatScreen> {
   ];
   bool apiCallInProgress = false;
 
+  // consider last n messages for building context
+  int lastMessagesCountForContext = 4;
+
   TextEditingController userMessageController = TextEditingController();
   ScrollController listViewontroller = ScrollController();
 
@@ -35,6 +38,20 @@ class _ChatScreen extends State<ChatScreen> {
     }
     logEvent(EventNames.ctaClicked,
         {EventParams.ctaName: 'send', EventParams.userMessage: userMessage});
+
+    // create context from previous chat, consider only last n messages
+    // so that we don't run out of tokens limit
+    String chatContext = '';
+    int messageStartIndex =
+        chatMessages.length - lastMessagesCountForContext >= 0
+            ? (chatMessages.length - lastMessagesCountForContext)
+            : 0;
+    for (int i = messageStartIndex; i < chatMessages.length; i++) {
+      ChatMessage chatMessage = chatMessages[i];
+      chatContext +=
+          "${chatMessage.bot ? 'AI:' : 'Human:'} ${chatMessage.message}\n";
+    }
+
     setState(() {
       chatMessages = [
         ...chatMessages,
@@ -43,8 +60,10 @@ class _ChatScreen extends State<ChatScreen> {
       apiCallInProgress = true;
     });
     userMessageController.text = '';
-    listViewontroller.jumpTo(listViewontroller.position.maxScrollExtent);
-    getResponseFromOpenAi(userMessage).then((response) {
+    Future.delayed(const Duration(milliseconds: 100), () {
+      listViewontroller.jumpTo(listViewontroller.position.maxScrollExtent);
+    });
+    getResponseFromOpenAi(chatContext, userMessage).then((response) {
       String botMessage = '${response['choices'][0]['text']}';
       setState(() {
         chatMessages = [
@@ -59,6 +78,9 @@ class _ChatScreen extends State<ChatScreen> {
     }).then((value) {
       setState(() {
         apiCallInProgress = false;
+      });
+      Future.delayed(const Duration(milliseconds: 100), () {
+        listViewontroller.jumpTo(listViewontroller.position.maxScrollExtent);
       });
     });
   }

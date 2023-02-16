@@ -2,6 +2,8 @@
 
 OpenAI GPT-3 powered Free Chat Bot
 
+PlayStore: https://play.google.com/store/apps/details?id=me.varunon9.pocket_ai
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.

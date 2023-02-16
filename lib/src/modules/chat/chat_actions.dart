@@ -5,11 +5,12 @@ import 'package:pocket_ai/src/network.dart';
 // Prompt: https://platform.openai.com/examples/default-chat
 // API parameters: https://platform.openai.com/docs/api-reference/completions/create
 // Pricing: https://openai.com/api/pricing/
-Future<Map<String, dynamic>> getResponseFromOpenAi(String userMessage) {
+Future<Map<String, dynamic>> getResponseFromOpenAi(
+    String context, String userMessage) {
   String endpoint = 'https://api.openai.com/v1/completions';
   String prompt = '''The following is a conversation with an AI assistant. 
 The assistant is helpful, creative, clever, and very friendly.
-
+$context
 Human: $userMessage
 AI:
 ''';
