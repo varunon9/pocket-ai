@@ -1,3 +1,5 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:pocket_ai/src/globals.dart';
 import 'package:pocket_ai/src/modules/chat/screens/chat_screen.dart';
@@ -14,8 +16,15 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreen extends State<SplashScreen> {
   Future<String> init() async {
-    Globals.deviceId = await getDeviceId();
+    String? deviceId = await getDeviceId();
+    Globals.deviceId = deviceId;
     Globals.appSettings = await getAppSettingsFromSharedPres();
+
+    if (deviceId != null) {
+      FirebaseCrashlytics.instance.setUserIdentifier(deviceId);
+      FirebaseAnalytics.instance.setUserId(id: deviceId);
+    }
+
     return ChatScreen.routeName;
   }
 

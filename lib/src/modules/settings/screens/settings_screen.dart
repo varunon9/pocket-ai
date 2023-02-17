@@ -38,10 +38,10 @@ class _SettingsScreen extends State<SettingsScreen> {
   @override
   void initState() {
     super.initState();
-    print(Globals.appSettings.gpt3Model);
-    print(Globals.appSettings.openAiApiKey);
-    print(Globals.appSettings.maxTokensCount);
-    apiKeyController.text = Globals.appSettings.openAiApiKey ?? '';
+    // check for free api key
+    if (Globals.freeOpenAiApiKey != Globals.appSettings.openAiApiKey) {
+      apiKeyController.text = Globals.appSettings.openAiApiKey ?? '';
+    }
     maxTokensController.text = Globals.appSettings.maxTokensCount.toString();
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       setState(() {
@@ -53,10 +53,13 @@ class _SettingsScreen extends State<SettingsScreen> {
   }
 
   void onUpdateSettingsOress() async {
-    logEvent(EventNames.updateSettingsClicked, {});
     String openAiApiKey = apiKeyController.text;
+    if (openAiApiKey.isEmpty) {
+      showSnackBar(context, message: 'API key is mandatory');
+      return;
+    }
+    logEvent(EventNames.updateSettingsClicked, {});
     int maxTokensCount = int.parse(maxTokensController.text);
-    print(gpt3Model);
     AppSettings updatedAppSettings = AppSettings(
         maxTokensCount: maxTokensCount,
         openAiApiKey: openAiApiKey,
