@@ -28,6 +28,7 @@ class _ChatScreen extends State<ChatScreen> {
     ChatMessage(message: AiBotConstants.introMessage, bot: true)
   ];
   bool apiCallInProgress = false;
+  FirebaseFirestore db = FirebaseFirestore.instance;
 
   // consider last n messages for building context
   int lastMessagesCountForContext = 4;
@@ -43,7 +44,6 @@ class _ChatScreen extends State<ChatScreen> {
     // if user hasn't set his own api key then get one from Firestore
     // only upto 5 sessions
     if (Globals.openAiApiKey == null) {
-      FirebaseFirestore db = FirebaseFirestore.instance;
       String? deviceId = Globals.deviceId;
       // todo: would deviceId ever be null?
       if (deviceId != null) {
@@ -83,6 +83,19 @@ class _ChatScreen extends State<ChatScreen> {
     });
   }
 
+  void saveUserMessageToFirestore(String userMessage) {
+    // store user queries to Firestore for study & analytics
+    String? deviceId = Globals.deviceId;
+    if (deviceId != null) {
+      db
+          .collection(FirestoreCollectionsConst.userMessagesToBot)
+          .doc(deviceId)
+          .collection(FirestoreCollectionsConst.messages)
+          .doc()
+          .set({'message': userMessage, 'time': FieldValue.serverTimestamp()});
+    }
+  }
+
   void onSendPress() {
     String userMessage = userMessageController.text;
     if (userMessage.isEmpty) {
@@ -111,9 +124,13 @@ class _ChatScreen extends State<ChatScreen> {
       apiCallInProgress = true;
     });
     userMessageController.text = '';
+
+    // adding delay so that list view is scrolled after setState re-render has been completed
     Future.delayed(const Duration(milliseconds: 100), () {
       listViewontroller.jumpTo(listViewontroller.position.maxScrollExtent);
     });
+    saveUserMessageToFirestore(userMessage);
+
     getResponseFromOpenAi(chatContext, userMessage).then((response) {
       String botMessage = '${response['choices'][0]['text']}';
       setState(() {
