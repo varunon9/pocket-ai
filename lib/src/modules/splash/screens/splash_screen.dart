@@ -15,6 +15,7 @@ class SplashScreen extends StatefulWidget {
 class _SplashScreen extends State<SplashScreen> {
   Future<String> init() async {
     Globals.deviceId = await getDeviceId();
+    Globals.appSettings = await getAppSettingsFromSharedPres();
     return ChatScreen.routeName;
   }
 

@@ -5,9 +5,12 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:pocket_ai/src/constants.dart';
+import 'package:pocket_ai/src/modules/settings/models/app_settings.dart';
 import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/api_exception.dart';
 import 'package:pocket_ai/src/widgets/custom_text.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void showSnackBar(BuildContext context, {required String message}) {
   final scaffold = ScaffoldMessenger.of(context);
@@ -86,4 +89,23 @@ void showToastMessage(String message) {
       msg: message,
       toastLength: Toast.LENGTH_LONG,
       gravity: ToastGravity.BOTTOM);
+}
+
+void saveAppSettingsToSharedPres(AppSettings appSettings) async {
+  // Obtain shared preferences.
+  final prefs = await SharedPreferences.getInstance();
+  await prefs.setInt(
+      SharedPrefsKeys.maxTokensCount, appSettings.maxTokensCount);
+  await prefs.setString(
+      SharedPrefsKeys.openAiApiKey, appSettings.openAiApiKey ?? '');
+  await prefs.setString(SharedPrefsKeys.gpt3Model, appSettings.gpt3Model);
+}
+
+Future<AppSettings> getAppSettingsFromSharedPres() async {
+  final prefs = await SharedPreferences.getInstance();
+  return AppSettings(
+      maxTokensCount: prefs.getInt(SharedPrefsKeys.maxTokensCount) ?? 150,
+      openAiApiKey: prefs.getString(SharedPrefsKeys.openAiApiKey),
+      gpt3Model:
+          prefs.getString(SharedPrefsKeys.gpt3Model) ?? 'text-davinci-003');
 }

@@ -18,3 +18,9 @@ class FirestoreCollectionsConst {
 }
 
 String androidPackageName = 'me.varunon9.pocket_ai';
+
+class SharedPrefsKeys {
+  static String maxTokensCount = 'maxTokensCount';
+  static String openAiApiKey = 'openAiApiKey';
+  static String gpt3Model = 'gpt3Model';
+}

@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:pocket_ai/src/constants.dart';
+import 'package:pocket_ai/src/globals.dart';
 import 'package:pocket_ai/src/modules/faqs/screens/faqs_screen.dart';
+import 'package:pocket_ai/src/modules/settings/models/app_settings.dart';
 import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/common.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
@@ -31,24 +33,38 @@ class _SettingsScreen extends State<SettingsScreen> {
   TextEditingController maxTokensController = TextEditingController();
   String appVersion = '';
   String buildNumber = '';
+  String gpt3Model = Globals.appSettings.gpt3Model;
 
   @override
   void initState() {
     super.initState();
-
+    print(Globals.appSettings.gpt3Model);
+    print(Globals.appSettings.openAiApiKey);
+    print(Globals.appSettings.maxTokensCount);
+    apiKeyController.text = Globals.appSettings.openAiApiKey ?? '';
+    maxTokensController.text = Globals.appSettings.maxTokensCount.toString();
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       setState(() {
         appVersion = packageInfo.version;
         buildNumber = packageInfo.buildNumber;
       });
     });
-    // todo
     logEvent(EventNames.settingsScreenViewed, {});
   }
 
-  void onUpdateSettingsOress() {
+  void onUpdateSettingsOress() async {
     logEvent(EventNames.updateSettingsClicked, {});
-    // todo
+    String openAiApiKey = apiKeyController.text;
+    int maxTokensCount = int.parse(maxTokensController.text);
+    print(gpt3Model);
+    AppSettings updatedAppSettings = AppSettings(
+        maxTokensCount: maxTokensCount,
+        openAiApiKey: openAiApiKey,
+        gpt3Model: gpt3Model);
+    Globals.appSettings = updatedAppSettings;
+
+    saveAppSettingsToSharedPres(updatedAppSettings);
+    showSnackBar(context, message: 'Changes saved successfully!');
   }
 
   void onKnowledgeCenterPress() {
@@ -142,8 +158,12 @@ class _SettingsScreen extends State<SettingsScreen> {
                       margin: const EdgeInsets.only(top: 12, bottom: 24),
                       child: CustomDropdownButton(
                         items: AiBotConstants.gptModels,
-                        value: AiBotConstants.gptModels.first,
-                        onChanged: (value) {},
+                        value: gpt3Model,
+                        onChanged: (value) {
+                          if (value != null) {
+                            gpt3Model = value;
+                          }
+                        },
                       )),
                   const CustomText(
                     'Maximum length of AI bot response',
@@ -159,6 +179,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                   Container(
                     margin: const EdgeInsets.only(top: 12, bottom: 24),
                     child: CustomTextFormField(
+                        textInputType: TextInputType.number,
                         controller: maxTokensController,
                         onChanged: (value) => {},
                         hintText: '150'),

@@ -9,9 +9,9 @@ class EventNames {
 
   // CTA click events
   static String sendMessageClicked = 'sendMessageClicked';
-  static String helpIconClicked = 'sendMessageClicked';
-  static String settingsIconClicked = 'sendMessageClicked';
-  static String updateSettingsClicked = 'settingsIconClicked';
+  static String helpIconClicked = 'helpIconClicked';
+  static String settingsIconClicked = 'settingsIconClicked';
+  static String updateSettingsClicked = 'updateSettingsClicked';
   static String faqsClicked = 'faqsClicked';
   static String rateAppClicked = 'rateAppClicked';
 

@@ -44,7 +44,7 @@ class _ChatScreen extends State<ChatScreen> {
 
     // if user hasn't set his own api key then get one from Firestore
     // only upto 5 sessions
-    if (Globals.openAiApiKey == null) {
+    if (Globals.appSettings.openAiApiKey == null) {
       String? deviceId = Globals.deviceId;
       // todo: would deviceId ever be null?
       if (deviceId != null) {
@@ -63,7 +63,7 @@ class _ChatScreen extends State<ChatScreen> {
                 .then((response) {
               if (response.docs.isNotEmpty) {
                 Map<String, dynamic>? data = response.docs[0].data();
-                Globals.openAiApiKey = data['apiKey'];
+                Globals.appSettings.openAiApiKey = data['apiKey'];
               }
             }).catchError((error) {
               showSnackBar(context, message: error.toString());

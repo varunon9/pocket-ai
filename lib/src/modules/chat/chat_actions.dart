@@ -1,3 +1,4 @@
+import 'package:pocket_ai/src/globals.dart';
 import 'package:pocket_ai/src/network.dart';
 
 // Intro Docs: https://platform.openai.com/docs/introduction
@@ -17,7 +18,7 @@ AI:
   return Network.postRequest(endpoint, {}, {
     // ID of the model to use. One can visit https://platform.openai.com/docs/api-reference/models/list
     // to see all the available models, or see https://platform.openai.com/docs/models/overview for descriptions of them.
-    'model': 'text-davinci-003',
+    'model': Globals.appSettings.gpt3Model,
     // The prompt(s) to generate completions for, encoded as a string, array of strings,
     // array of tokens, or array of token arrays.
     'prompt': prompt,
@@ -27,7 +28,7 @@ AI:
     // The maximum number of tokens to generate in the completion.
     // The token count of your prompt plus max_tokens cannot exceed the model's context length.
     // Most models have a context length of 2048 tokens (except for the newest models, which support 4096).
-    'max_tokens': 150,
+    'max_tokens': Globals.appSettings.maxTokensCount,
     // An alternative to sampling with temperature, called nucleus sampling,
     // where the model considers the results of the tokens with top_p probability mass.
     // So 0.1 means only the tokens comprising the top 10% probability mass are considered

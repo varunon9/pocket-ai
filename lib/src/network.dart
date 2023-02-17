@@ -9,7 +9,7 @@ import 'package:pocket_ai/src/utils/api_exception.dart';
 Map<String, String> _getCommonHeaders() {
   Map<String, String> headers = {
     'Content-Type': 'application/json; charset=UTF-8',
-    'Authorization': 'Bearer ${Globals.openAiApiKey}'
+    'Authorization': 'Bearer ${Globals.appSettings.openAiApiKey}'
   };
   return headers;
 }
