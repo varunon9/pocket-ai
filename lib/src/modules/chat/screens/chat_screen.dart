@@ -1,7 +1,9 @@
 import 'package:bubble/bubble.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pocket_ai/src/constants.dart';
+import 'package:pocket_ai/src/globals.dart';
 import 'package:pocket_ai/src/modules/chat/chat_actions.dart';
 import 'package:pocket_ai/src/modules/chat/models/chat_message.dart';
 import 'package:pocket_ai/src/modules/faqs/screens/faqs_screen.dart';
@@ -33,6 +35,48 @@ class _ChatScreen extends State<ChatScreen> {
   TextEditingController userMessageController = TextEditingController();
   ScrollController listViewontroller = ScrollController();
 
+  @override
+  void initState() {
+    super.initState();
+    logEvent(EventNames.chatScreenViewed, {});
+
+    // if user hasn't set his own api key then get one from Firestore
+    // only upto 5 sessions
+    if (Globals.openAiApiKey == null) {
+      FirebaseFirestore db = FirebaseFirestore.instance;
+      String? deviceId = Globals.deviceId;
+      // todo: would deviceId ever be null?
+      if (deviceId != null) {
+        DocumentReference<Map<String, dynamic>> documentRef = db
+            .collection(FirestoreCollectionsConst.userSessionsCount)
+            .doc(deviceId);
+        // get session count
+        documentRef.get().then((response) {
+          Map<String, dynamic>? data = response.data();
+          int sessionCount = data == null ? 0 : data['count'];
+          if (sessionCount <= 5) {
+            // get open AI key and set to Globals
+            db
+                .collection(FirestoreCollectionsConst.openAiApiKeys)
+                .get()
+                .then((response) {
+              if (response.docs.isNotEmpty) {
+                Map<String, dynamic>? data = response.docs[0].data();
+                Globals.openAiApiKey = data['apiKey'];
+              }
+            }).catchError((error) {
+              showSnackBar(context, message: error.toString());
+            });
+          }
+          // increase the session count in Firestore
+          documentRef.set({'count': sessionCount + 1});
+        }).catchError((error) {
+          showSnackBar(context, message: error.toString());
+        });
+      }
+    }
+  }
+
   void onChatMessageLongPress(ChatMessage chatItem) {
     Clipboard.setData(ClipboardData(text: chatItem.message)).then((value) {
       showToastMessage('Copied to Clipboard');
@@ -44,8 +88,7 @@ class _ChatScreen extends State<ChatScreen> {
     if (userMessage.isEmpty) {
       return;
     }
-    logEvent(EventNames.ctaClicked,
-        {EventParams.ctaName: 'send', EventParams.userMessage: userMessage});
+    logEvent(EventNames.sendMessageClicked, {});
 
     // create context from previous chat, consider only last n messages
     // so that we don't run out of tokens limit
@@ -112,7 +155,10 @@ class _ChatScreen extends State<ChatScreen> {
                 icon: const Icon(Icons.help)),
             IconButton(
                 tooltip: 'Settings',
-                onPressed: (() {}),
+                onPressed: (() {
+                  logEvent(EventNames.settingsIconClicked, {});
+                  //navigateToScreen(context, FaqsScreen.routeName);
+                }),
                 icon: const Icon(Icons.settings))
           ]),
       body: Stack(children: [

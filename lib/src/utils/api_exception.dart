@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ApiError {
-  final int? code;
+  final String? code;
   final String? message;
   final String? cause;
 
@@ -11,7 +11,7 @@ class ApiError {
 
   factory ApiError.fromJson(Map<String, dynamic> json) {
     return ApiError(
-        code: json['code'] as int?,
+        code: json['code'] as String?,
         message: json['message'] as String?,
         cause: json['cause'] as String?);
   }

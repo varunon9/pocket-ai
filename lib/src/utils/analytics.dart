@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 class EventNames {
   // Screen view events
   static String faqScreenViewed = 'faqScreenViewed';
+  static String chatScreenViewed = 'chatScreenViewed';
 
   // CTA click events
-  static String ctaClicked = 'ctaClicked';
+  static String sendMessageClicked = 'sendMessageClicked';
+  static String settingsIconClicked = 'settingsIconClicked';
 
   // API action events
   static String openAiResponseSuccess = 'openAiResponseSuccess';

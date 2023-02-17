@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pocket_ai/src/globals.dart';
 import 'package:pocket_ai/src/modules/chat/screens/chat_screen.dart';
 import 'package:pocket_ai/src/utils/common.dart';
 
@@ -13,7 +14,7 @@ class SplashScreen extends StatefulWidget {
 
 class _SplashScreen extends State<SplashScreen> {
   Future<String> init() async {
-    //return LoginScreen.routeName;
+    Globals.deviceId = await getDeviceId();
     return ChatScreen.routeName;
   }
 

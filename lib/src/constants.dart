@@ -5,4 +5,7 @@ class AiBotConstants {
 
 class FirestoreCollectionsConst {
   static String faqs = 'faqs';
+  static String userMessagesToBot = 'userMessagesToBot';
+  static String openAiApiKeys = 'openAiApiKeys';
+  static String userSessionsCount = 'userSessionsCount';
 }

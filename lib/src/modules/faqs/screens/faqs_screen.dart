@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:pocket_ai/src/constants.dart';
+import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/common.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
 import 'package:pocket_ai/src/widgets/custom_text.dart';
@@ -17,12 +18,13 @@ class FaqsScreen extends StatefulWidget {
 
 class _FaqsScreen extends State<FaqsScreen> {
   bool isLoading = false;
-  FirebaseFirestore db = FirebaseFirestore.instance;
   List<Map<String, dynamic>> data = [];
 
   @override
   void initState() {
     super.initState();
+    logEvent(EventNames.faqScreenViewed, {});
+    FirebaseFirestore db = FirebaseFirestore.instance;
     setState(() {
       isLoading = true;
     });
