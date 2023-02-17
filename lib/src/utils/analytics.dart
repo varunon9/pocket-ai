@@ -5,10 +5,15 @@ class EventNames {
   // Screen view events
   static String faqScreenViewed = 'faqScreenViewed';
   static String chatScreenViewed = 'chatScreenViewed';
+  static String settingsScreenViewed = 'settingsScreenViewed';
 
   // CTA click events
   static String sendMessageClicked = 'sendMessageClicked';
-  static String settingsIconClicked = 'settingsIconClicked';
+  static String helpIconClicked = 'sendMessageClicked';
+  static String settingsIconClicked = 'sendMessageClicked';
+  static String updateSettingsClicked = 'settingsIconClicked';
+  static String faqsClicked = 'faqsClicked';
+  static String rateAppClicked = 'rateAppClicked';
 
   // API action events
   static String openAiResponseSuccess = 'openAiResponseSuccess';

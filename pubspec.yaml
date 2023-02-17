@@ -42,6 +42,8 @@ dependencies:
   firebase_crashlytics: ^3.0.13
   firebase_core: ^2.6.0
   cloud_firestore: ^4.4.1
+  package_info_plus: ^3.0.3
+  url_launcher: ^6.1.9
 
 dev_dependencies:
   flutter_test:

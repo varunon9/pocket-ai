@@ -7,6 +7,7 @@ import 'package:pocket_ai/src/globals.dart';
 import 'package:pocket_ai/src/modules/chat/chat_actions.dart';
 import 'package:pocket_ai/src/modules/chat/models/chat_message.dart';
 import 'package:pocket_ai/src/modules/faqs/screens/faqs_screen.dart';
+import 'package:pocket_ai/src/modules/settings/screens/settings_screen.dart';
 import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/common.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
@@ -167,6 +168,7 @@ class _ChatScreen extends State<ChatScreen> {
             IconButton(
                 tooltip: 'Help',
                 onPressed: (() {
+                  logEvent(EventNames.helpIconClicked, {});
                   navigateToScreen(context, FaqsScreen.routeName);
                 }),
                 icon: const Icon(Icons.help)),
@@ -174,7 +176,7 @@ class _ChatScreen extends State<ChatScreen> {
                 tooltip: 'Settings',
                 onPressed: (() {
                   logEvent(EventNames.settingsIconClicked, {});
-                  //navigateToScreen(context, FaqsScreen.routeName);
+                  navigateToScreen(context, SettingsScreen.routeName);
                 }),
                 icon: const Icon(Icons.settings))
           ]),
