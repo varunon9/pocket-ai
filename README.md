@@ -1,8 +1,22 @@
 # pocket_ai
 
-OpenAI GPT-3 powered Free Chat Bot
+OpenAI GPT-3 powered Free Chat Bot android app built in Flutter
 
-PlayStore: https://play.google.com/store/apps/details?id=me.varunon9.pocket_ai
+Download it from PlayStore: https://play.google.com/store/apps/details?id=me.varunon9.pocket_ai
+
+## Features
+
+1. Open-ended conversation with GPT-3 powered AI Chatbot
+2. Bot can respond to many queries e.g. Summarize content, translate to other languages, factual answers, draft emails, help in programming, etc
+3. Bot remembers the last 2 sets of conversations so context is maintained while chatting
+4. A settings screen to set the OpenAI API key, choose among GPT-3 language models, etc
+5. Copy chat messages functionality
+
+## Screenshots
+|  |  |
+| --- | --- |
+|![Conversation with bot - 1](./screenshots/conversation-with-bot-1.png) | ![Conversation with bot - 2](./screenshots/conversation-with-bot-2.png)|
+|![Settings Screen](./screenshots/pocket-ai-app-settings.png) | ![FAQs Screen](./screenshots/pocket-ai-faqs.png)|
 
 ## Getting Started
 
