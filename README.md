@@ -1,8 +1,10 @@
 # pocket_ai
 
-OpenAI GPT-3 powered Free Chat Bot android app built in Flutter
+OpenAI GPT-3 powered free chatbot android app in Flutter similar to Chat-GPT
 
 Download it from PlayStore: https://play.google.com/store/apps/details?id=me.varunon9.pocket_ai
+
+![visitors](https://visitor-badge.glitch.me/badge?page_id=varunon9.pocket_ai&left_color=green&right_color=red)
 
 ## Features
 
