@@ -1,6 +1,6 @@
 # pocket_ai
 
-OpenAI GPT-3 powered free chatbot android app in Flutter similar to Chat-GPT
+OpenAI GPT-3.5 powered free chatbot android app in Flutter similar to Chat-GPT
 
 Download it from PlayStore: https://play.google.com/store/apps/details?id=me.varunon9.pocket_ai
 
@@ -8,10 +8,10 @@ Download it from PlayStore: https://play.google.com/store/apps/details?id=me.var
 
 ## Features
 
-1. Open-ended conversation with GPT-3 powered AI Chatbot
+1. Open-ended conversation with AI Chatbot powered by `gpt-3.5-turbo` model
 2. Bot can respond to many queries e.g. Summarize content, translate to other languages, factual answers, draft emails, help in programming, etc
 3. Bot remembers the last 2 sets of conversations so context is maintained while chatting
-4. A settings screen to set the OpenAI API key, choose among GPT-3 language models, etc
+4. A settings screen to set the OpenAI API key, etc
 5. Copy chat messages functionality
 
 ## Screenshots
@@ -61,6 +61,7 @@ Flutter setup: https://docs.flutter.dev/get-started/install/macos
 5. Firebase Firestore: https://firebase.google.com/docs/firestore/quickstart#dart
 6. Release android app: https://docs.flutter.dev/deployment/android
 7. OpenAI API docs: https://platform.openai.com/docs/introduction/overview
+8. Chat-GPT APIs: https://openai.com/blog/introducing-chatgpt-and-whisper-apis
 
 ## Use your own Firebase project
 

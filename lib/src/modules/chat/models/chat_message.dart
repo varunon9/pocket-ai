@@ -1,6 +1,16 @@
-class ChatMessage {
-  final String message;
-  final bool bot;
+enum ChatRole { system, user, assistant }
 
-  ChatMessage({required this.message, required this.bot});
+class ChatMessage {
+  final String content;
+  final ChatRole role;
+
+  ChatMessage({required this.content, required this.role});
+
+  dynamic toJson() =>
+      {'content': content, 'role': role.toString().split('.').last};
+
+  @override
+  String toString() {
+    return toJson().toString();
+  }
 }

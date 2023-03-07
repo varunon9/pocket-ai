@@ -26,7 +26,7 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreen extends State<ChatScreen> {
   List<ChatMessage> chatMessages = [
-    ChatMessage(message: AiBotConstants.introMessage, bot: true)
+    ChatMessage(content: AiBotConstants.introMessage, role: ChatRole.assistant)
   ];
   bool apiCallInProgress = false;
   FirebaseFirestore db = FirebaseFirestore.instance;
@@ -72,7 +72,12 @@ class _ChatScreen extends State<ChatScreen> {
             });
           }
           // increase the session count in Firestore
-          documentRef.set({'count': sessionCount + 1});
+          documentRef.set({
+            'count': sessionCount + 1,
+            'createdAt': (data == null || data['createdAt'] == null)
+                ? FieldValue.serverTimestamp()
+                : data['createdAt']
+          });
         }).catchError((error) {
           showSnackBar(context, message: error.toString());
         });
@@ -81,7 +86,7 @@ class _ChatScreen extends State<ChatScreen> {
   }
 
   void onChatMessageLongPress(ChatMessage chatItem) {
-    Clipboard.setData(ClipboardData(text: chatItem.message)).then((value) {
+    Clipboard.setData(ClipboardData(text: chatItem.content)).then((value) {
       showToastMessage('Copied to Clipboard');
     });
   }
@@ -108,21 +113,19 @@ class _ChatScreen extends State<ChatScreen> {
 
     // create context from previous chat, consider only last n messages
     // so that we don't run out of tokens limit
-    String chatContext = '';
+    List<ChatMessage> lastNMessages = [];
     int messageStartIndex =
         chatMessages.length - lastMessagesCountForContext >= 0
             ? (chatMessages.length - lastMessagesCountForContext)
             : 0;
     for (int i = messageStartIndex; i < chatMessages.length; i++) {
-      ChatMessage chatMessage = chatMessages[i];
-      chatContext +=
-          "${chatMessage.bot ? 'AI:' : 'Human:'} ${chatMessage.message}\n";
+      lastNMessages.add(chatMessages[i]);
     }
 
     setState(() {
       chatMessages = [
         ...chatMessages,
-        ChatMessage(message: userMessage, bot: false)
+        ChatMessage(content: userMessage, role: ChatRole.user)
       ];
       apiCallInProgress = true;
     });
@@ -134,12 +137,15 @@ class _ChatScreen extends State<ChatScreen> {
     });
     saveUserMessageToFirestore(userMessage);
 
-    getResponseFromOpenAi(chatContext, userMessage).then((response) {
-      String botMessage = '${response['choices'][0]['text']}';
+    getResponseFromOpenAi([
+      ...lastNMessages,
+      ChatMessage(content: userMessage, role: ChatRole.user)
+    ]).then((response) {
+      String botMessage = '${response['choices'][0]['message']['content']}';
       setState(() {
         chatMessages = [
           ...chatMessages,
-          ChatMessage(message: botMessage, bot: true)
+          ChatMessage(content: botMessage, role: ChatRole.assistant)
         ];
       });
       logEvent(EventNames.openAiResponseSuccess, {});
@@ -193,23 +199,19 @@ class _ChatScreen extends State<ChatScreen> {
                 padding: const EdgeInsets.only(top: 12, bottom: 12),
                 itemBuilder: (context, index) {
                   var chatItem = chatMessages[index];
+                  bool fromBot = chatItem.role == ChatRole.assistant;
                   return GestureDetector(
                     onLongPress: () {
                       onChatMessageLongPress(chatItem);
                     },
                     child: Bubble(
-                        nip: chatItem.bot
-                            ? BubbleNip.leftTop
-                            : BubbleNip.rightTop,
+                        nip: fromBot ? BubbleNip.leftTop : BubbleNip.rightTop,
                         margin:
                             const BubbleEdges.only(top: 16, left: 8, right: 16),
-                        color: chatItem.bot
-                            ? Colors.white
-                            : CustomColors.lightText,
-                        alignment: chatItem.bot
-                            ? Alignment.topLeft
-                            : Alignment.topRight,
-                        child: CustomText(chatItem.message)),
+                        color: fromBot ? Colors.white : CustomColors.lightText,
+                        alignment:
+                            fromBot ? Alignment.topLeft : Alignment.topRight,
+                        child: CustomText(chatItem.content)),
                   );
                 })),
         Align(

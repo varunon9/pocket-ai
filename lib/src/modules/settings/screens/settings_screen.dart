@@ -9,7 +9,6 @@ import 'package:pocket_ai/src/modules/settings/models/app_settings.dart';
 import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/common.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
-import 'package:pocket_ai/src/widgets/custom_dropdown_button.dart';
 import 'package:pocket_ai/src/widgets/custom_elevated_button.dart';
 import 'package:pocket_ai/src/widgets/custom_text.dart';
 import 'package:pocket_ai/src/widgets/custom_text_form_field.dart';
@@ -33,7 +32,6 @@ class _SettingsScreen extends State<SettingsScreen> {
   TextEditingController maxTokensController = TextEditingController();
   String appVersion = '';
   String buildNumber = '';
-  String gpt3Model = Globals.appSettings.gpt3Model;
 
   @override
   void initState() {
@@ -60,10 +58,8 @@ class _SettingsScreen extends State<SettingsScreen> {
     }
     logEvent(EventNames.updateSettingsClicked, {});
     int maxTokensCount = int.parse(maxTokensController.text);
-    AppSettings updatedAppSettings = AppSettings(
-        maxTokensCount: maxTokensCount,
-        openAiApiKey: openAiApiKey,
-        gpt3Model: gpt3Model);
+    AppSettings updatedAppSettings =
+        AppSettings(maxTokensCount: maxTokensCount, openAiApiKey: openAiApiKey);
     Globals.appSettings = updatedAppSettings;
 
     saveAppSettingsToSharedPres(updatedAppSettings);
@@ -142,32 +138,6 @@ class _SettingsScreen extends State<SettingsScreen> {
                         onChanged: (value) => {},
                         hintText: 'sk-T7q1L8p5G****'),
                   ),
-                  const CustomText(
-                    'GPT-3 Model',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  Container(
-                      margin: const EdgeInsets.only(top: 4),
-                      child: const CustomText(
-                        'These models can understand and generate natural language. OpenAI offers four main models with different levels of power suitable for different tasks. Davinci is the most capable model, and Ada is the fastest. ',
-                        style: TextStyle(
-                            color: CustomColors.lightText, fontSize: 11),
-                      )),
-                  Container(
-                      decoration: BoxDecoration(
-                          color: CustomColors.secondary,
-                          borderRadius: BorderRadius.circular(12)),
-                      padding: const EdgeInsets.only(left: 8, right: 8),
-                      margin: const EdgeInsets.only(top: 12, bottom: 24),
-                      child: CustomDropdownButton(
-                        items: AiBotConstants.gptModels,
-                        value: gpt3Model,
-                        onChanged: (value) {
-                          if (value != null) {
-                            gpt3Model = value;
-                          }
-                        },
-                      )),
                   const CustomText(
                     'Maximum length of AI bot response',
                     style: TextStyle(color: Colors.white),

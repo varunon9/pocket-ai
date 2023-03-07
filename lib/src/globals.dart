@@ -7,6 +7,6 @@ class Globals {
   static String? freeOpenAiApiKey;
 
   // this will be overridden in splash screen init
-  static AppSettings appSettings = AppSettings(
-      maxTokensCount: 150, openAiApiKey: null, gpt3Model: 'text-davinci-003');
+  static AppSettings appSettings =
+      AppSettings(maxTokensCount: 150, openAiApiKey: null);
 }

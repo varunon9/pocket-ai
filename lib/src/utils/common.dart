@@ -101,14 +101,12 @@ void saveAppSettingsToSharedPres(AppSettings appSettings) async {
       SharedPrefsKeys.maxTokensCount, appSettings.maxTokensCount);
   await prefs.setString(
       SharedPrefsKeys.openAiApiKey, appSettings.openAiApiKey ?? '');
-  await prefs.setString(SharedPrefsKeys.gpt3Model, appSettings.gpt3Model);
 }
 
 Future<AppSettings> getAppSettingsFromSharedPres() async {
   final prefs = await SharedPreferences.getInstance();
   return AppSettings(
-      maxTokensCount: prefs.getInt(SharedPrefsKeys.maxTokensCount) ?? 150,
-      openAiApiKey: prefs.getString(SharedPrefsKeys.openAiApiKey),
-      gpt3Model:
-          prefs.getString(SharedPrefsKeys.gpt3Model) ?? 'text-davinci-003');
+    maxTokensCount: prefs.getInt(SharedPrefsKeys.maxTokensCount) ?? 150,
+    openAiApiKey: prefs.getString(SharedPrefsKeys.openAiApiKey),
+  );
 }
