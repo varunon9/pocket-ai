@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:android_id/android_id.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -52,8 +53,10 @@ Future<String?> getDeviceId() async {
     var iosDeviceInfo = await deviceInfo.iosInfo;
     return iosDeviceInfo.identifierForVendor; // unique ID on iOS
   } else if (Platform.isAndroid) {
-    var androidDeviceInfo = await deviceInfo.androidInfo;
-    return androidDeviceInfo.id; // unique ID on Android
+    // this is not unique, using android_id plugin for this
+    /*var androidDeviceInfo = await deviceInfo.androidInfo;
+    return androidDeviceInfo.id;*/ // unique ID on Android
+    return await const AndroidId().getId();
   } else {
     return null;
   }
