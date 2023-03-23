@@ -37,9 +37,11 @@ class Network {
     var allHeaders = {..._getCommonHeaders(), ...headers};
     _printRequest('GET URL: $url', allHeaders, null);
     var response = await http.get(Uri.parse(url), headers: allHeaders);
-    _printResponse(response.statusCode, response.body);
+    _printResponse(response.statusCode, utf8.decode(response.bodyBytes));
     if (successStatusCodes.contains(response.statusCode)) {
-      return response.body == '' ? {} : jsonDecode(response.body);
+      return response.body == ''
+          ? {}
+          : jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       throw ApiException(
           message: 'Request failed with status code ${response.statusCode}',
@@ -54,9 +56,11 @@ class Network {
     _printRequest('POST URL: $url', allHeaders, body);
     var response = await http.post(Uri.parse(url),
         headers: allHeaders, body: jsonEncode(body));
-    _printResponse(response.statusCode, response.body);
+    _printResponse(response.statusCode, utf8.decode(response.bodyBytes));
     if (successStatusCodes.contains(response.statusCode)) {
-      return response.body == '' ? {} : jsonDecode(response.body);
+      return response.body == ''
+          ? {}
+          : jsonDecode(utf8.decode(response.bodyBytes));
     } else {
       throw ApiException(
           message: 'Request failed with status code ${response.statusCode}',
