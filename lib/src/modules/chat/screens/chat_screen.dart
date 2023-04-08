@@ -2,6 +2,7 @@ import 'package:bubble/bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:pocket_ai/src/constants.dart';
 import 'package:pocket_ai/src/globals.dart';
 import 'package:pocket_ai/src/modules/chat/chat_actions.dart';
@@ -211,7 +212,7 @@ class _ChatScreen extends State<ChatScreen> {
                         color: fromBot ? Colors.white : CustomColors.lightText,
                         alignment:
                             fromBot ? Alignment.topLeft : Alignment.topRight,
-                        child: CustomText(chatItem.content)),
+                        child: MarkdownBody(data: chatItem.content)),
                   );
                 })),
         Align(

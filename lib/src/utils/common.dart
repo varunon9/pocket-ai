@@ -49,6 +49,9 @@ void logGenericError(error) {
 
 Future<String?> getDeviceId() async {
   var deviceInfo = DeviceInfoPlugin();
+  if (kIsWeb) {
+    return null;
+  }
   if (Platform.isIOS) {
     var iosDeviceInfo = await deviceInfo.iosInfo;
     return iosDeviceInfo.identifierForVendor; // unique ID on iOS
