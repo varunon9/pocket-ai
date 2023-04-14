@@ -7,6 +7,8 @@ class Globals {
   static String? freeOpenAiApiKey;
 
   // this will be overridden in splash screen init
-  static AppSettings appSettings =
-      AppSettings(maxTokensCount: 150, openAiApiKey: null);
+  static AppSettings appSettings = AppSettings(
+      maxTokensCount: 150,
+      openAiApiKey: null,
+      generatedContentSignature: '- Pocket AI');
 }

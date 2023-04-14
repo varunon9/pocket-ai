@@ -6,14 +6,18 @@ class EventNames {
   static String faqScreenViewed = 'faqScreenViewed';
   static String chatScreenViewed = 'chatScreenViewed';
   static String settingsScreenViewed = 'settingsScreenViewed';
+  static String contentGeneratorScreenViewed = 'contentGeneratorScreenViewed';
 
   // CTA click events
   static String sendMessageClicked = 'sendMessageClicked';
   static String helpIconClicked = 'helpIconClicked';
   static String settingsIconClicked = 'settingsIconClicked';
+  static String contentGeneratorIconClicked = 'contentGeneratorIconClicked';
   static String updateSettingsClicked = 'updateSettingsClicked';
   static String faqsClicked = 'faqsClicked';
   static String rateAppClicked = 'rateAppClicked';
+  static String generateContentClicked = 'generateContentClicked';
+  static String shareGeneratedContentClicked = 'shareGeneratedContentClicked';
 
   // API action events
   static String openAiResponseSuccess = 'openAiResponseSuccess';
