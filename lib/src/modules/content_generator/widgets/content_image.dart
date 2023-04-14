@@ -25,7 +25,7 @@ class _ContentImage extends State<ContentImage> {
     try {
       var imageBytes = await widgetsToImageController.capture();
       if (imageBytes != null) {
-        Share.shareXFiles([XFile.fromData(imageBytes)],
+        Share.shareXFiles([XFile.fromData(imageBytes, mimeType: 'image/png')],
             text: 'Pocket AI: Generate and share content');
       }
     } catch (error) {
