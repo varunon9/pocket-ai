@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pocket_ai/firebase_options.dart';
 import 'package:pocket_ai/src/modules/chat/screens/chat_screen.dart';
 import 'package:pocket_ai/src/modules/faqs/screens/faqs_screen.dart';
+import 'package:pocket_ai/src/modules/content_generator/screens/content_generator_screen.dart';
 import 'package:pocket_ai/src/modules/settings/screens/settings_screen.dart';
 import 'package:pocket_ai/src/modules/splash/screens/splash_screen.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
@@ -53,6 +54,8 @@ class MyApp extends StatelessWidget {
         ChatScreen.routeName: (context) => const ChatScreen(),
         FaqsScreen.routeName: (context) => const FaqsScreen(),
         SettingsScreen.routeName: (context) => const SettingsScreen(),
+        ContentGeneratorScreen.routeName: (context) =>
+            const ContentGeneratorScreen(),
       },
     );
   }

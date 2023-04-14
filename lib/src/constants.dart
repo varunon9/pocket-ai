@@ -1,12 +1,10 @@
 class AiBotConstants {
   static String introMessage =
       'Hi, I am pocket AI bot. How can I help you today?';
-  static List<String> gptModels = [
-    'text-davinci-003',
-    'text-curie-001',
-    'text-babbage-001',
-    'text-ada-001',
-  ];
+  static String introMessageForContentGenerator =
+      'Generate quote/poem/thoughts or any content and share with world. Copy and paste below example prompt to get started.';
+  static String contentGeneratorSamplePrompt =
+      "Generate a quote in Hindi based on following emotions- love, life, dream. Translation is not required.";
 }
 
 class FirestoreCollectionsConst {
@@ -15,6 +13,8 @@ class FirestoreCollectionsConst {
   static String messages = 'messages';
   static String openAiApiKeys = 'openAiApiKeys';
   static String userSessionsCount = 'userSessionsCount';
+  static String contentGeneratorPrompts = 'contentGeneratorPrompts';
+  static String prompts = 'prompts';
 }
 
 String androidPackageName = 'me.varunon9.pocket_ai';
@@ -22,5 +22,5 @@ String androidPackageName = 'me.varunon9.pocket_ai';
 class SharedPrefsKeys {
   static String maxTokensCount = 'maxTokensCount';
   static String openAiApiKey = 'openAiApiKey';
-  static String gpt3Model = 'gpt3Model';
+  static String generatedContentSignature = 'generatedContentSignature';
 }

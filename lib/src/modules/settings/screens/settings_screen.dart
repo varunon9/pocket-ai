@@ -30,6 +30,8 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreen extends State<SettingsScreen> {
   TextEditingController apiKeyController = TextEditingController();
   TextEditingController maxTokensController = TextEditingController();
+  TextEditingController generatedContentSignatureController =
+      TextEditingController();
   String appVersion = '';
   String buildNumber = '';
 
@@ -41,6 +43,8 @@ class _SettingsScreen extends State<SettingsScreen> {
       apiKeyController.text = Globals.appSettings.openAiApiKey ?? '';
     }
     maxTokensController.text = Globals.appSettings.maxTokensCount.toString();
+    generatedContentSignatureController.text =
+        Globals.appSettings.generatedContentSignature ?? '';
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       setState(() {
         appVersion = packageInfo.version;
@@ -58,8 +62,11 @@ class _SettingsScreen extends State<SettingsScreen> {
     }
     logEvent(EventNames.updateSettingsClicked, {});
     int maxTokensCount = int.parse(maxTokensController.text);
-    AppSettings updatedAppSettings =
-        AppSettings(maxTokensCount: maxTokensCount, openAiApiKey: openAiApiKey);
+    String generatedContentSignature = generatedContentSignatureController.text;
+    AppSettings updatedAppSettings = AppSettings(
+        maxTokensCount: maxTokensCount,
+        openAiApiKey: openAiApiKey,
+        generatedContentSignature: generatedContentSignature);
     Globals.appSettings = updatedAppSettings;
 
     saveAppSettingsToSharedPres(updatedAppSettings);
@@ -156,6 +163,24 @@ class _SettingsScreen extends State<SettingsScreen> {
                         controller: maxTokensController,
                         onChanged: (value) => {},
                         hintText: '150'),
+                  ),
+                  const CustomText(
+                    'Signature for generated content',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                  Container(
+                      margin: const EdgeInsets.only(top: 4),
+                      child: const CustomText(
+                        'This signature will be used in image created by generated content',
+                        style: TextStyle(
+                            color: CustomColors.lightText, fontSize: 11),
+                      )),
+                  Container(
+                    margin: const EdgeInsets.only(top: 12, bottom: 24),
+                    child: CustomTextFormField(
+                        controller: generatedContentSignatureController,
+                        onChanged: (value) => {},
+                        hintText: '- Pocket AI'),
                   ),
                   Container(
                     margin: const EdgeInsets.only(top: 36, bottom: 36),

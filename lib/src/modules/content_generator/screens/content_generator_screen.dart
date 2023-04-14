@@ -7,83 +7,45 @@ import 'package:pocket_ai/src/constants.dart';
 import 'package:pocket_ai/src/globals.dart';
 import 'package:pocket_ai/src/modules/chat/chat_actions.dart';
 import 'package:pocket_ai/src/modules/chat/models/chat_message.dart';
+import 'package:pocket_ai/src/modules/content_generator/widgets/content_image.dart';
 import 'package:pocket_ai/src/modules/faqs/screens/faqs_screen.dart';
-import 'package:pocket_ai/src/modules/content_generator/screens/content_generator_screen.dart';
 import 'package:pocket_ai/src/modules/settings/screens/settings_screen.dart';
 import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/common.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
+import 'package:pocket_ai/src/widgets/custom_text.dart';
 import 'package:pocket_ai/src/widgets/custom_text_form_field.dart';
 import 'package:pocket_ai/src/widgets/heading.dart';
 
-class ChatScreen extends StatefulWidget {
-  static const routeName = '/chat';
+class ContentGeneratorScreen extends StatefulWidget {
+  static const routeName = '/content-generator';
 
-  const ChatScreen({Key? key}) : super(key: key);
+  const ContentGeneratorScreen({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _ChatScreen();
+  State<StatefulWidget> createState() => _ContentGeneratorScreen();
 }
 
-class _ChatScreen extends State<ChatScreen> {
+class _ContentGeneratorScreen extends State<ContentGeneratorScreen> {
   List<ChatMessage> chatMessages = [
-    ChatMessage(content: AiBotConstants.introMessage, role: ChatRole.assistant)
+    ChatMessage(
+        content: AiBotConstants.introMessageForContentGenerator,
+        role: ChatRole.system),
+    ChatMessage(
+        content: AiBotConstants.contentGeneratorSamplePrompt,
+        role: ChatRole.system)
   ];
   bool apiCallInProgress = false;
   FirebaseFirestore db = FirebaseFirestore.instance;
 
-  // consider last n messages for building context
-  int lastMessagesCountForContext = 4;
-
-  TextEditingController userMessageController = TextEditingController();
-  ScrollController listViewontroller = ScrollController();
+  TextEditingController contentGeneratorPromptController =
+      TextEditingController();
+  ScrollController listViewController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    logEvent(EventNames.chatScreenViewed, {});
-
-    // if user hasn't set his own api key then get one from Firestore
-    // only upto 5 sessions
-    if (Globals.appSettings.openAiApiKey == null ||
-        Globals.appSettings.openAiApiKey == '') {
-      String? deviceId = Globals.deviceId;
-      // todo: would deviceId ever be null?
-      if (deviceId != null) {
-        DocumentReference<Map<String, dynamic>> documentRef = db
-            .collection(FirestoreCollectionsConst.userSessionsCount)
-            .doc(deviceId);
-        // get session count
-        documentRef.get().then((response) {
-          Map<String, dynamic>? data = response.data();
-          int sessionCount = data == null ? 0 : data['count'];
-          if (sessionCount <= 5) {
-            // get open AI key and set to Globals
-            db
-                .collection(FirestoreCollectionsConst.openAiApiKeys)
-                .get()
-                .then((response) {
-              if (response.docs.isNotEmpty) {
-                Map<String, dynamic>? data = response.docs[0].data();
-                Globals.freeOpenAiApiKey = data['apiKey'];
-                Globals.appSettings.openAiApiKey = data['apiKey'];
-              }
-            }).catchError((error) {
-              showSnackBar(context, message: error.toString());
-            });
-          }
-          // increase the session count in Firestore
-          documentRef.set({
-            'count': sessionCount + 1,
-            'createdAt': (data == null || data['createdAt'] == null)
-                ? FieldValue.serverTimestamp()
-                : data['createdAt']
-          });
-        }).catchError((error) {
-          showSnackBar(context, message: error.toString());
-        });
-      }
-    }
+    logEvent(EventNames.contentGeneratorScreenViewed, {});
   }
 
   void onChatMessageLongPress(ChatMessage chatItem) {
@@ -92,56 +54,43 @@ class _ChatScreen extends State<ChatScreen> {
     });
   }
 
-  void saveUserMessageToFirestore(String userMessage) {
-    // store user queries to Firestore for study & analytics
+  void saveContentGeneratorPromptsToFirestore(String prompt) {
+    // store prompts to Firestore for study & analytics
     String? deviceId = Globals.deviceId;
     if (deviceId != null) {
       db
-          .collection(FirestoreCollectionsConst.userMessagesToBot)
+          .collection(FirestoreCollectionsConst.contentGeneratorPrompts)
           .doc(deviceId)
-          .collection(FirestoreCollectionsConst.messages)
+          .collection(FirestoreCollectionsConst.prompts)
           .doc()
-          .set({'message': userMessage, 'time': FieldValue.serverTimestamp()});
+          .set({'prompt': prompt, 'time': FieldValue.serverTimestamp()});
     }
   }
 
   void onSendPress() {
-    String userMessage = userMessageController.text;
-    if (userMessage.isEmpty) {
+    String prompt = contentGeneratorPromptController.text;
+    if (prompt.isEmpty) {
       return;
     }
-    logEvent(EventNames.sendMessageClicked, {});
-
-    // create context from previous chat, consider only last n messages
-    // so that we don't run out of tokens limit
-    List<ChatMessage> lastNMessages = [];
-    int messageStartIndex =
-        chatMessages.length - lastMessagesCountForContext >= 0
-            ? (chatMessages.length - lastMessagesCountForContext)
-            : 0;
-    for (int i = messageStartIndex; i < chatMessages.length; i++) {
-      lastNMessages.add(chatMessages[i]);
-    }
+    logEvent(EventNames.generateContentClicked, {});
 
     setState(() {
       chatMessages = [
         ...chatMessages,
-        ChatMessage(content: userMessage, role: ChatRole.user)
+        ChatMessage(content: prompt, role: ChatRole.user)
       ];
       apiCallInProgress = true;
     });
-    userMessageController.text = '';
+    contentGeneratorPromptController.text = '';
 
     // adding delay so that list view is scrolled after setState re-render has been completed
     Future.delayed(const Duration(milliseconds: 100), () {
-      listViewontroller.jumpTo(listViewontroller.position.maxScrollExtent);
+      listViewController.jumpTo(listViewController.position.maxScrollExtent);
     });
-    saveUserMessageToFirestore(userMessage);
+    saveContentGeneratorPromptsToFirestore(prompt);
 
-    getResponseFromOpenAi([
-      ...lastNMessages,
-      ChatMessage(content: userMessage, role: ChatRole.user)
-    ]).then((response) {
+    getResponseFromOpenAi([ChatMessage(content: prompt, role: ChatRole.user)])
+        .then((response) {
       String botMessage = '${response['choices'][0]['message']['content']}';
       setState(() {
         chatMessages = [
@@ -158,7 +107,7 @@ class _ChatScreen extends State<ChatScreen> {
         apiCallInProgress = false;
       });
       Future.delayed(const Duration(milliseconds: 100), () {
-        listViewontroller.jumpTo(listViewontroller.position.maxScrollExtent);
+        listViewController.jumpTo(listViewController.position.maxScrollExtent);
       });
     });
   }
@@ -182,18 +131,11 @@ class _ChatScreen extends State<ChatScreen> {
       appBar: AppBar(
           automaticallyImplyLeading: false,
           title: const Heading(
-            'Pocket AI',
+            'Content Generator',
             type: HeadingType.h4,
           ),
           backgroundColor: CustomColors.darkBackground,
           actions: <Widget>[
-            IconButton(
-                tooltip: 'Content Generator',
-                onPressed: (() {
-                  logEvent(EventNames.contentGeneratorIconClicked, {});
-                  navigateToScreen(context, ContentGeneratorScreen.routeName);
-                }),
-                icon: const Icon(Icons.mood)),
             PopupMenuButton<int>(
               onSelected: (item) => handlePopupMenuClick(item),
               itemBuilder: (context) => [
@@ -206,7 +148,7 @@ class _ChatScreen extends State<ChatScreen> {
         Container(
             margin: const EdgeInsets.only(bottom: 72),
             child: ListView.builder(
-                controller: listViewontroller,
+                controller: listViewController,
                 itemCount: chatMessages.length,
                 shrinkWrap: true,
                 physics: const AlwaysScrollableScrollPhysics(),
@@ -214,18 +156,40 @@ class _ChatScreen extends State<ChatScreen> {
                 itemBuilder: (context, index) {
                   var chatItem = chatMessages[index];
                   bool fromBot = chatItem.role == ChatRole.assistant;
+                  bool fromSystem = chatItem.role == ChatRole.system;
                   return GestureDetector(
                     onLongPress: () {
                       onChatMessageLongPress(chatItem);
                     },
-                    child: Bubble(
-                        nip: fromBot ? BubbleNip.leftTop : BubbleNip.rightTop,
-                        margin:
-                            const BubbleEdges.only(top: 16, left: 8, right: 16),
-                        color: fromBot ? Colors.white : CustomColors.lightText,
-                        alignment:
-                            fromBot ? Alignment.topLeft : Alignment.topRight,
-                        child: MarkdownBody(data: chatItem.content)),
+                    child: fromSystem
+                        ? Container(
+                            margin: const EdgeInsets.only(
+                                top: 8, bottom: 0, left: 16, right: 16),
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: CustomColors.secondary,
+                            ),
+                            child: CustomText(
+                              chatItem.content,
+                              style: const TextStyle(
+                                  color: Colors.white, fontSize: 10),
+                            ),
+                          )
+                        : Bubble(
+                            nip: fromBot
+                                ? BubbleNip.leftTop
+                                : BubbleNip.rightTop,
+                            margin: const BubbleEdges.only(
+                                top: 16, left: 8, right: 16),
+                            color:
+                                fromBot ? Colors.white : CustomColors.lightText,
+                            alignment: fromBot
+                                ? Alignment.topLeft
+                                : Alignment.topRight,
+                            child: fromBot
+                                ? ContentImage(content: chatItem.content)
+                                : MarkdownBody(data: chatItem.content)),
                   );
                 })),
         Align(
@@ -240,11 +204,11 @@ class _ChatScreen extends State<ChatScreen> {
                       margin: const EdgeInsets.only(right: 8),
                       child: CustomTextFormField(
                           onChanged: (value) => {},
-                          controller: userMessageController,
+                          controller: contentGeneratorPromptController,
                           minLines: 1,
                           maxLines: 4,
                           textInputType: TextInputType.multiline,
-                          hintText: 'Ask anything to Pocket AI bot'),
+                          hintText: 'Your prompt to generate content'),
                     ),
                   ),
                   Ink(
