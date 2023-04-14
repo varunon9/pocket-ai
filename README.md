@@ -11,14 +11,15 @@ Download it from PlayStore: https://play.google.com/store/apps/details?id=me.var
 1. Open-ended conversation with AI Chatbot powered by `gpt-3.5-turbo` model
 2. Bot can respond to many queries e.g. Summarize content, translate to other languages, factual answers, draft emails, help in programming, etc
 3. Bot remembers the last 2 sets of conversations so context is maintained while chatting
-4. A settings screen to set the OpenAI API key, etc
-5. Copy chat messages functionality
+4. Users can generate content e.g. poems, quotes, thoughts etc using AI and share on social media
+5. A settings screen to set the OpenAI API key, word limit, signature for generated content.
+6. Copy chat messages functionality
 
 ## Screenshots
 |  |  |
 | --- | --- |
 |![Conversation with bot - 1](./screenshots/conversation-with-bot-1.png) | ![Conversation with bot - 2](./screenshots/conversation-with-bot-2.png)|
-|![Settings Screen](./screenshots/pocket-ai-app-settings.png) | ![FAQs Screen](./screenshots/pocket-ai-faqs.png)|
+|![Settings Screen](./screenshots/pocket-ai-app-settings.png) | ![Content Generator Screen](./screenshots/pocket-ai-content-generator.png)|
 
 ## Getting Started
 
