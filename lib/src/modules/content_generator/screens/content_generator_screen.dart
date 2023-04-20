@@ -1,4 +1,3 @@
-import 'package:bubble/bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,10 +11,11 @@ import 'package:pocket_ai/src/modules/faqs/screens/faqs_screen.dart';
 import 'package:pocket_ai/src/modules/settings/screens/settings_screen.dart';
 import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/common.dart';
+import 'package:pocket_ai/src/widgets/bot_or_user_message_bubble.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
-import 'package:pocket_ai/src/widgets/custom_text.dart';
 import 'package:pocket_ai/src/widgets/custom_text_form_field.dart';
 import 'package:pocket_ai/src/widgets/heading.dart';
+import 'package:pocket_ai/src/widgets/system_message.dart';
 
 class ContentGeneratorScreen extends StatefulWidget {
   static const routeName = '/content-generator';
@@ -30,10 +30,7 @@ class _ContentGeneratorScreen extends State<ContentGeneratorScreen> {
   List<ChatMessage> chatMessages = [
     ChatMessage(
         content: AiBotConstants.introMessageForContentGenerator,
-        role: ChatRole.system),
-    ChatMessage(
-        content: AiBotConstants.contentGeneratorSamplePrompt,
-        role: ChatRole.system)
+        role: ChatRole.assistant)
   ];
   bool apiCallInProgress = false;
   FirebaseFirestore db = FirebaseFirestore.instance;
@@ -74,6 +71,10 @@ class _ContentGeneratorScreen extends State<ContentGeneratorScreen> {
     }
     logEvent(EventNames.generateContentClicked, {});
 
+    // create context from previous chat, consider only last 4 messages
+    // so that we don't run out of tokens limit
+    List<ChatMessage> lastNMessages = getLastNMessagesFromChat(chatMessages);
+
     setState(() {
       chatMessages = [
         ...chatMessages,
@@ -89,8 +90,10 @@ class _ContentGeneratorScreen extends State<ContentGeneratorScreen> {
     });
     saveContentGeneratorPromptsToFirestore(prompt);
 
-    getResponseFromOpenAi([ChatMessage(content: prompt, role: ChatRole.user)])
-        .then((response) {
+    getResponseFromOpenAi([
+      ...lastNMessages,
+      ChatMessage(content: prompt, role: ChatRole.user)
+    ]).then((response) {
       String botMessage = '${response['choices'][0]['message']['content']}';
       setState(() {
         chatMessages = [
@@ -162,34 +165,13 @@ class _ContentGeneratorScreen extends State<ContentGeneratorScreen> {
                       onChatMessageLongPress(chatItem);
                     },
                     child: fromSystem
-                        ? Container(
-                            margin: const EdgeInsets.only(
-                                top: 8, bottom: 0, left: 16, right: 16),
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              color: CustomColors.secondary,
-                            ),
-                            child: CustomText(
-                              chatItem.content,
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 10),
-                            ),
-                          )
-                        : Bubble(
-                            nip: fromBot
-                                ? BubbleNip.leftTop
-                                : BubbleNip.rightTop,
-                            margin: const BubbleEdges.only(
-                                top: 16, left: 8, right: 16),
-                            color:
-                                fromBot ? Colors.white : CustomColors.lightText,
-                            alignment: fromBot
-                                ? Alignment.topLeft
-                                : Alignment.topRight,
-                            child: fromBot
+                        ? SystemMessage(content: chatItem.content)
+                        : BotOrUserMessageBubble(
+                            fromBot: fromBot,
+                            child: fromBot && index != 0
                                 ? ContentImage(content: chatItem.content)
-                                : MarkdownBody(data: chatItem.content)),
+                                : MarkdownBody(data: chatItem.content),
+                          ),
                   );
                 })),
         Align(

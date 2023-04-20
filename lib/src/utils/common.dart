@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pocket_ai/src/constants.dart';
+import 'package:pocket_ai/src/modules/chat/models/chat_message.dart';
 import 'package:pocket_ai/src/modules/settings/models/app_settings.dart';
 import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/api_exception.dart';
@@ -116,4 +117,16 @@ Future<AppSettings> getAppSettingsFromSharedPres() async {
     generatedContentSignature:
         prefs.getString(SharedPrefsKeys.generatedContentSignature),
   );
+}
+
+List<ChatMessage> getLastNMessagesFromChat(List<ChatMessage> chatMessages) {
+  int lastMessagesCountForContext = 4;
+  List<ChatMessage> lastNMessages = [];
+  int messageStartIndex = chatMessages.length - lastMessagesCountForContext >= 0
+      ? (chatMessages.length - lastMessagesCountForContext)
+      : 0;
+  for (int i = messageStartIndex; i < chatMessages.length; i++) {
+    lastNMessages.add(chatMessages[i]);
+  }
+  return lastNMessages;
 }

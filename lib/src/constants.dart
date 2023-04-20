@@ -1,10 +1,8 @@
 class AiBotConstants {
   static String introMessage =
-      'Hi, I am pocket AI bot. How can I help you today?';
+      'Hi, I am Pocket AI bot. How can I help you today?';
   static String introMessageForContentGenerator =
-      'Generate quote/poem/thoughts or any content and share with world. Copy and paste below example prompt to get started.';
-  static String contentGeneratorSamplePrompt =
-      "Generate a quote in Hindi based on following emotions- love, life, dream. Translation is not required.";
+      'Hello, I am Pocket AI bot. I can generate any type of content for you e.g. quote/poem/essay/story etc, which you can share with the world.';
 }
 
 class FirestoreCollectionsConst {

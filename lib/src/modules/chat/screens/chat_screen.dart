@@ -1,4 +1,3 @@
-import 'package:bubble/bubble.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -12,6 +11,7 @@ import 'package:pocket_ai/src/modules/content_generator/screens/content_generato
 import 'package:pocket_ai/src/modules/settings/screens/settings_screen.dart';
 import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/common.dart';
+import 'package:pocket_ai/src/widgets/bot_or_user_message_bubble.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
 import 'package:pocket_ai/src/widgets/custom_text_form_field.dart';
 import 'package:pocket_ai/src/widgets/heading.dart';
@@ -31,9 +31,6 @@ class _ChatScreen extends State<ChatScreen> {
   ];
   bool apiCallInProgress = false;
   FirebaseFirestore db = FirebaseFirestore.instance;
-
-  // consider last n messages for building context
-  int lastMessagesCountForContext = 4;
 
   TextEditingController userMessageController = TextEditingController();
   ScrollController listViewontroller = ScrollController();
@@ -112,16 +109,9 @@ class _ChatScreen extends State<ChatScreen> {
     }
     logEvent(EventNames.sendMessageClicked, {});
 
-    // create context from previous chat, consider only last n messages
+    // create context from previous chat, consider only last 4 messages
     // so that we don't run out of tokens limit
-    List<ChatMessage> lastNMessages = [];
-    int messageStartIndex =
-        chatMessages.length - lastMessagesCountForContext >= 0
-            ? (chatMessages.length - lastMessagesCountForContext)
-            : 0;
-    for (int i = messageStartIndex; i < chatMessages.length; i++) {
-      lastNMessages.add(chatMessages[i]);
-    }
+    List<ChatMessage> lastNMessages = getLastNMessagesFromChat(chatMessages);
 
     setState(() {
       chatMessages = [
@@ -218,13 +208,8 @@ class _ChatScreen extends State<ChatScreen> {
                     onLongPress: () {
                       onChatMessageLongPress(chatItem);
                     },
-                    child: Bubble(
-                        nip: fromBot ? BubbleNip.leftTop : BubbleNip.rightTop,
-                        margin:
-                            const BubbleEdges.only(top: 16, left: 8, right: 16),
-                        color: fromBot ? Colors.white : CustomColors.lightText,
-                        alignment:
-                            fromBot ? Alignment.topLeft : Alignment.topRight,
+                    child: BotOrUserMessageBubble(
+                        fromBot: fromBot,
                         child: MarkdownBody(data: chatItem.content)),
                   );
                 })),
