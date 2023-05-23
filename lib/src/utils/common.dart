@@ -31,6 +31,10 @@ void logApiErrorAndShowMessage(BuildContext context,
     {required dynamic exception}) {
   if (exception is ApiException) {
     String message = exception.error.message ?? exception.message;
+    if (message.isEmpty) {
+      message =
+          exception.error.code ?? exception.error.cause ?? 'Request failed';
+    }
     showSnackBar(context, message: message);
   } else {
     if (kDebugMode) {
@@ -112,7 +116,7 @@ void saveAppSettingsToSharedPres(AppSettings appSettings) async {
 Future<AppSettings> getAppSettingsFromSharedPres() async {
   final prefs = await SharedPreferences.getInstance();
   return AppSettings(
-    maxTokensCount: prefs.getInt(SharedPrefsKeys.maxTokensCount) ?? 150,
+    maxTokensCount: prefs.getInt(SharedPrefsKeys.maxTokensCount) ?? 1500,
     openAiApiKey: prefs.getString(SharedPrefsKeys.openAiApiKey),
     generatedContentSignature:
         prefs.getString(SharedPrefsKeys.generatedContentSignature),
