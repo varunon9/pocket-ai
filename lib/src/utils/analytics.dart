@@ -7,6 +7,7 @@ class EventNames {
   static String chatScreenViewed = 'chatScreenViewed';
   static String settingsScreenViewed = 'settingsScreenViewed';
   static String contentGeneratorScreenViewed = 'contentGeneratorScreenViewed';
+  static String todosManagerScreenViewed = 'todosManagerScreenViewed';
 
   // CTA click events
   static String sendMessageClicked = 'sendMessageClicked';
@@ -18,6 +19,9 @@ class EventNames {
   static String rateAppClicked = 'rateAppClicked';
   static String generateContentClicked = 'generateContentClicked';
   static String shareGeneratedContentClicked = 'shareGeneratedContentClicked';
+  static String todosManagerIconClicked = 'todosManagerIconClicked';
+  static String sendButtonInTodosManagerClicked =
+      'sendButtonInTodosManagerClicked';
 
   // API action events
   static String openAiResponseSuccess = 'openAiResponseSuccess';

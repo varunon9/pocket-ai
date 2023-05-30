@@ -6,13 +6,13 @@ import 'package:pocket_ai/src/constants.dart';
 import 'package:pocket_ai/src/globals.dart';
 import 'package:pocket_ai/src/modules/chat/chat_actions.dart';
 import 'package:pocket_ai/src/modules/chat/models/chat_message.dart';
-import 'package:pocket_ai/src/modules/faqs/screens/faqs_screen.dart';
 import 'package:pocket_ai/src/modules/content_generator/screens/content_generator_screen.dart';
-import 'package:pocket_ai/src/modules/settings/screens/settings_screen.dart';
+import 'package:pocket_ai/src/modules/todos_manager/todos_manager_screen.dart';
 import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/common.dart';
 import 'package:pocket_ai/src/widgets/bot_or_user_message_bubble.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
+import 'package:pocket_ai/src/widgets/custom_popup_menu.dart';
 import 'package:pocket_ai/src/widgets/custom_text_form_field.dart';
 import 'package:pocket_ai/src/widgets/heading.dart';
 
@@ -153,19 +153,6 @@ class _ChatScreen extends State<ChatScreen> {
     });
   }
 
-  void handlePopupMenuClick(int item) {
-    switch (item) {
-      case 0:
-        logEvent(EventNames.helpIconClicked, {});
-        navigateToScreen(context, FaqsScreen.routeName);
-        break;
-      case 1:
-        logEvent(EventNames.settingsIconClicked, {});
-        navigateToScreen(context, SettingsScreen.routeName);
-        break;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,14 +170,15 @@ class _ChatScreen extends State<ChatScreen> {
                   logEvent(EventNames.contentGeneratorIconClicked, {});
                   navigateToScreen(context, ContentGeneratorScreen.routeName);
                 }),
-                icon: const Icon(Icons.mood)),
-            PopupMenuButton<int>(
-              onSelected: (item) => handlePopupMenuClick(item),
-              itemBuilder: (context) => [
-                const PopupMenuItem<int>(value: 0, child: Text('Help')),
-                const PopupMenuItem<int>(value: 1, child: Text('Settings')),
-              ],
-            ),
+                icon: const Icon(Icons.content_paste)),
+            IconButton(
+                tooltip: 'Todos Manager',
+                onPressed: (() {
+                  logEvent(EventNames.todosManagerIconClicked, {});
+                  navigateToScreen(context, TodosManagerScreen.routeName);
+                }),
+                icon: const Icon(Icons.checklist)),
+            const CustomPopupMenu(),
           ]),
       body: Stack(children: [
         Container(

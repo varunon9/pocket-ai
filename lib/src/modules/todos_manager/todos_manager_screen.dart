@@ -14,31 +14,30 @@ import 'package:pocket_ai/src/widgets/custom_text_form_field.dart';
 import 'package:pocket_ai/src/widgets/heading.dart';
 import 'package:pocket_ai/src/widgets/system_message.dart';
 
-class ContentGeneratorScreen extends StatefulWidget {
-  static const routeName = '/content-generator';
+class TodosManagerScreen extends StatefulWidget {
+  static const routeName = '/todos-manager';
 
-  const ContentGeneratorScreen({Key? key}) : super(key: key);
+  const TodosManagerScreen({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _ContentGeneratorScreen();
+  State<StatefulWidget> createState() => _TodosManagerScreen();
 }
 
-class _ContentGeneratorScreen extends State<ContentGeneratorScreen> {
+class _TodosManagerScreen extends State<TodosManagerScreen> {
   List<ChatMessage> chatMessages = [
     ChatMessage(
-        content: AiBotConstants.introMessageForContentGenerator,
+        content: AiBotConstants.introMessageForTodosManager,
         role: ChatRole.assistant)
   ];
   bool apiCallInProgress = false;
 
-  TextEditingController contentGeneratorPromptController =
-      TextEditingController();
+  TextEditingController todosManagerPromptController = TextEditingController();
   ScrollController listViewController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    logEvent(EventNames.contentGeneratorScreenViewed, {});
+    logEvent(EventNames.todosManagerScreenViewed, {});
   }
 
   void onChatMessageLongPress(ChatMessage chatItem) {
@@ -48,15 +47,11 @@ class _ContentGeneratorScreen extends State<ContentGeneratorScreen> {
   }
 
   void onSendPress() {
-    String prompt = contentGeneratorPromptController.text;
+    String prompt = todosManagerPromptController.text;
     if (prompt.isEmpty) {
       return;
     }
-    logEvent(EventNames.generateContentClicked, {});
-
-    // create context from previous chat, consider only last 4 messages
-    // so that we don't run out of tokens limit
-    List<ChatMessage> lastNMessages = getLastNMessagesFromChat(chatMessages);
+    logEvent(EventNames.sendButtonInTodosManagerClicked, {});
 
     setState(() {
       chatMessages = [
@@ -65,19 +60,17 @@ class _ContentGeneratorScreen extends State<ContentGeneratorScreen> {
       ];
       apiCallInProgress = true;
     });
-    contentGeneratorPromptController.text = '';
+    todosManagerPromptController.text = '';
 
     // adding delay so that list view is scrolled after setState re-render has been completed
     Future.delayed(const Duration(milliseconds: 100), () {
       listViewController.jumpTo(listViewController.position.maxScrollExtent);
     });
     savePromptsToFirestoreCollection(
-        prompt, FirestoreCollectionsConst.contentGeneratorPrompts);
+        prompt, FirestoreCollectionsConst.todosManagerPrompts);
 
-    getResponseFromOpenAi([
-      ...lastNMessages,
-      ChatMessage(content: prompt, role: ChatRole.user)
-    ]).then((response) {
+    getResponseFromOpenAi([ChatMessage(content: prompt, role: ChatRole.user)])
+        .then((response) {
       String botMessage = '${response['choices'][0]['message']['content']}';
       setState(() {
         chatMessages = [
@@ -105,7 +98,7 @@ class _ContentGeneratorScreen extends State<ContentGeneratorScreen> {
       appBar: AppBar(
           //automaticallyImplyLeading: false,
           title: const Heading(
-            'Content Generator',
+            'Todos Manager',
             type: HeadingType.h4,
           ),
           backgroundColor: CustomColors.darkBackground,
@@ -151,11 +144,11 @@ class _ContentGeneratorScreen extends State<ContentGeneratorScreen> {
                       margin: const EdgeInsets.only(right: 8),
                       child: CustomTextFormField(
                           onChanged: (value) => {},
-                          controller: contentGeneratorPromptController,
+                          controller: todosManagerPromptController,
                           minLines: 1,
                           maxLines: 4,
                           textInputType: TextInputType.multiline,
-                          hintText: 'Your prompt to generate content'),
+                          hintText: 'A complete and clear instruction to bot'),
                     ),
                   ),
                   Ink(

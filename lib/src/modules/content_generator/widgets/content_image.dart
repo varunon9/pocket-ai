@@ -44,11 +44,16 @@ class _ContentImage extends State<ContentImage> {
             margin: const EdgeInsets.only(top: 4, bottom: 4, left: 4, right: 4),
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: CustomColors.secondary,
-                image: const DecorationImage(
+              borderRadius: BorderRadius.circular(8),
+              color: CustomColors.secondary,
+              gradient: LinearGradient(colors: [
+                getColorFromHex('#B68648', Colors.white),
+                getColorFromHex('#FBF3A3', Colors.white)
+              ]),
+              /*image: const DecorationImage(
                     image: AssetImage('assets/images/content-background.jpeg'),
-                    fit: BoxFit.cover)),
+                    fit: BoxFit.cover)*/
+            ),
             child: Column(
               children: [
                 Center(

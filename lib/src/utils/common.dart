@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:android_id/android_id.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pocket_ai/src/constants.dart';
+import 'package:pocket_ai/src/globals.dart';
 import 'package:pocket_ai/src/modules/chat/models/chat_message.dart';
 import 'package:pocket_ai/src/modules/settings/models/app_settings.dart';
 import 'package:pocket_ai/src/utils/analytics.dart';
@@ -133,4 +135,28 @@ List<ChatMessage> getLastNMessagesFromChat(List<ChatMessage> chatMessages) {
     lastNMessages.add(chatMessages[i]);
   }
   return lastNMessages;
+}
+
+/// String is in the format "aabbcc" or "ffaabbcc" with an optional leading "#".
+Color getColorFromHex(String? hexString, Color fallbackColor) {
+  if (hexString == null || hexString == '') {
+    return fallbackColor;
+  }
+  final buffer = StringBuffer();
+  if (hexString.length == 6 || hexString.length == 7) buffer.write('ff');
+  buffer.write(hexString.replaceFirst('#', ''));
+  return Color(int.parse(buffer.toString(), radix: 16));
+}
+
+void savePromptsToFirestoreCollection(String prompt, String collection) {
+  // store prompts to Firestore for study & analytics
+  String? deviceId = Globals.deviceId;
+  if (deviceId != null) {
+    FirebaseFirestore.instance
+        .collection(collection)
+        .doc(deviceId)
+        .collection(FirestoreCollectionsConst.prompts)
+        .doc()
+        .set({'prompt': prompt, 'time': FieldValue.serverTimestamp()});
+  }
 }

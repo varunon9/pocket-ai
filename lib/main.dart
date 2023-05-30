@@ -7,6 +7,7 @@ import 'package:pocket_ai/src/modules/faqs/screens/faqs_screen.dart';
 import 'package:pocket_ai/src/modules/content_generator/screens/content_generator_screen.dart';
 import 'package:pocket_ai/src/modules/settings/screens/settings_screen.dart';
 import 'package:pocket_ai/src/modules/splash/screens/splash_screen.dart';
+import 'package:pocket_ai/src/modules/todos_manager/todos_manager_screen.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
 
 void main() async {
@@ -56,6 +57,7 @@ class MyApp extends StatelessWidget {
         SettingsScreen.routeName: (context) => const SettingsScreen(),
         ContentGeneratorScreen.routeName: (context) =>
             const ContentGeneratorScreen(),
+        TodosManagerScreen.routeName: (context) => const TodosManagerScreen(),
       },
     );
   }
