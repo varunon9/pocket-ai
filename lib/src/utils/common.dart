@@ -160,3 +160,22 @@ void savePromptsToFirestoreCollection(String prompt, String collection) {
         .set({'prompt': prompt, 'time': FieldValue.serverTimestamp()});
   }
 }
+
+String getFormattedDate(DateTime dateTime) {
+  List<String> months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec'
+  ];
+  String monthName = months[dateTime.month - 1];
+  return '${dateTime.day.toString().padLeft(2, '0')} $monthName, ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
+}

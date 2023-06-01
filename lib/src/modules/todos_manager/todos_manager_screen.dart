@@ -1,12 +1,18 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:pocket_ai/src/constants.dart';
 import 'package:pocket_ai/src/modules/chat/chat_actions.dart';
 import 'package:pocket_ai/src/modules/chat/models/chat_message.dart';
-import 'package:pocket_ai/src/modules/content_generator/widgets/content_image.dart';
+import 'package:pocket_ai/src/modules/todos_manager/db/todo_provider.dart';
+import 'package:pocket_ai/src/modules/todos_manager/models/todo.dart';
+import 'package:pocket_ai/src/modules/todos_manager/models/todo_intent.dart';
+import 'package:pocket_ai/src/modules/todos_manager/widgets/todos_container.dart';
 import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/common.dart';
+import 'package:pocket_ai/src/utils/todos_manager.dart';
 import 'package:pocket_ai/src/widgets/bot_or_user_message_bubble.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
 import 'package:pocket_ai/src/widgets/custom_popup_menu.dart';
@@ -27,17 +33,88 @@ class _TodosManagerScreen extends State<TodosManagerScreen> {
   List<ChatMessage> chatMessages = [
     ChatMessage(
         content: AiBotConstants.introMessageForTodosManager,
-        role: ChatRole.assistant)
+        role: ChatRole.assistant),
   ];
   bool apiCallInProgress = false;
 
   TextEditingController todosManagerPromptController = TextEditingController();
   ScrollController listViewController = ScrollController();
 
+  TodoProvider todoProvider = TodoProvider();
+
   @override
   void initState() {
     super.initState();
     logEvent(EventNames.todosManagerScreenViewed, {});
+    todoProvider.open().then((value) {
+      setState(() {
+        chatMessages = [
+          ...chatMessages,
+          ChatMessage(
+              content:
+                  '{"intents": [], "acknowledgement_to_user": "These are your todos."}',
+              role: ChatRole.assistant)
+        ];
+      });
+    }).catchError((error) {
+      showSnackBar(context, message: error.toString());
+      logGenericError(error);
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    todoProvider.close();
+  }
+
+  Future executeIntent(TodoIntent? intent) async {
+    if (intent == null) {
+      return;
+    }
+    debugPrint(intent.toString());
+    debugPrint('---------------');
+    switch (intent.type) {
+      case 'CREATE_TODOS':
+        {
+          await todoProvider.createTodos(intent.todosPayload);
+          break;
+        }
+      case 'UPDATE_TODOS':
+        {
+          await todoProvider.updateTodos(intent.todosPayload);
+          break;
+        }
+      case 'DELETE_TODOS':
+        {
+          await todoProvider.deleteTodos(intent.todosPayload);
+          break;
+        }
+      case 'CREATE_TODO_TASKS':
+        {
+          await todoProvider.createMultipleTasks(intent.tasksPayload);
+          break;
+        }
+      case 'UPDATE_TODO_TASKS':
+        {
+          await todoProvider.updateMultipleTasks(intent.tasksPayload);
+          break;
+        }
+      case 'DELETE_TODO_TASKS':
+        {
+          await todoProvider.deleteMultipleTasks(intent.tasksPayload);
+          break;
+        }
+    }
+  }
+
+  Future executeAllIntents(List<dynamic> intents) async {
+    for (var element in intents) {
+      TodoIntent intent = TodoIntent.fromJson(element);
+      await executeIntent(intent).catchError((error) {
+        showSnackBar(context, message: error.toString());
+      });
+    }
   }
 
   void onChatMessageLongPress(ChatMessage chatItem) {
@@ -46,7 +123,7 @@ class _TodosManagerScreen extends State<TodosManagerScreen> {
     });
   }
 
-  void onSendPress() {
+  void onSendPress() async {
     String prompt = todosManagerPromptController.text;
     if (prompt.isEmpty) {
       return;
@@ -69,9 +146,15 @@ class _TodosManagerScreen extends State<TodosManagerScreen> {
     savePromptsToFirestoreCollection(
         prompt, FirestoreCollectionsConst.todosManagerPrompts);
 
-    getResponseFromOpenAi([ChatMessage(content: prompt, role: ChatRole.user)])
-        .then((response) {
+    List<Todo> userTodos = await todoProvider.getTodos();
+    getResponseFromOpenAi([
+      ChatMessage(
+          content: getPromptForTodosManager(prompt, userTodos),
+          role: ChatRole.user)
+    ]).then((response) async {
       String botMessage = '${response['choices'][0]['message']['content']}';
+      List<dynamic> intents = json.decode(botMessage)['intents'];
+      await executeAllIntents(intents);
       setState(() {
         chatMessages = [
           ...chatMessages,
@@ -127,7 +210,10 @@ class _TodosManagerScreen extends State<TodosManagerScreen> {
                         : BotOrUserMessageBubble(
                             fromBot: fromBot,
                             child: fromBot && index != 0
-                                ? ContentImage(content: chatItem.content)
+                                ? TodosContainer(
+                                    openAiResponse: chatItem.content,
+                                    todoProvider: todoProvider,
+                                  )
                                 : MarkdownBody(data: chatItem.content),
                           ),
                   );
