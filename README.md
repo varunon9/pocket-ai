@@ -20,6 +20,7 @@ Download it from PlayStore: https://play.google.com/store/apps/details?id=me.var
 | --- | --- |
 |![Conversation with bot - 1](./screenshots/conversation-with-bot-1.png) | ![Conversation with bot - 2](./screenshots/conversation-with-bot-2.png)|
 |![Settings Screen](./screenshots/pocket-ai-app-settings.png) | ![Content Generator Screen](./screenshots/pocket-ai-content-generator.png)|
+|![Todos Manager Screen 1](./screenshots/todos-manager-1.png) | ![Todos Manager Screen 2](./screenshots/todos-manager-2.png)|
 
 ## Getting Started
 
