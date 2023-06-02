@@ -2,7 +2,8 @@
 
 OpenAI GPT-3.5 powered free chatbot android app in Flutter similar to Chat-GPT
 
-Download it from PlayStore: https://play.google.com/store/apps/details?id=me.varunon9.pocket_ai
+### Download it from PlayStore
+[![Android App](./screenshots/google-play.png)](https://play.google.com/store/apps/details?id=me.varunon9.pocket_ai&hl=en_IN&gl=US&utm_source=Github)
 
 ![visitors](https://visitor-badge.glitch.me/badge?page_id=varunon9.pocket_ai&left_color=green&right_color=red)
 
