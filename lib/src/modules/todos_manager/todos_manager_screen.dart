@@ -34,8 +34,13 @@ class _TodosManagerScreen extends State<TodosManagerScreen> {
     ChatMessage(
         content: AiBotConstants.introMessageForTodosManager,
         role: ChatRole.assistant),
+    ChatMessage(
+        content:
+            '{"intents": [], "acknowledgement_to_user": "These are your todos."}',
+        role: ChatRole.assistant)
   ];
   bool apiCallInProgress = false;
+  List<Todo> todos = [];
 
   TextEditingController todosManagerPromptController = TextEditingController();
   ScrollController listViewController = ScrollController();
@@ -47,15 +52,7 @@ class _TodosManagerScreen extends State<TodosManagerScreen> {
     super.initState();
     logEvent(EventNames.todosManagerScreenViewed, {});
     todoProvider.open().then((value) {
-      setState(() {
-        chatMessages = [
-          ...chatMessages,
-          ChatMessage(
-              content:
-                  '{"intents": [], "acknowledgement_to_user": "These are your todos."}',
-              role: ChatRole.assistant)
-        ];
-      });
+      refreshTodos();
     }).catchError((error) {
       showSnackBar(context, message: error.toString());
       logGenericError(error);
@@ -66,6 +63,19 @@ class _TodosManagerScreen extends State<TodosManagerScreen> {
   void dispose() {
     super.dispose();
     todoProvider.close();
+  }
+
+  void refreshTodos() {
+    todoProvider.getTodos().then(
+      (value) {
+        setState(() {
+          todos = value;
+        });
+      },
+    ).catchError((error) {
+      showSnackBar(context, message: error.toString());
+      logGenericError(error);
+    });
   }
 
   Future executeIntent(TodoIntent? intent) async {
@@ -117,6 +127,16 @@ class _TodosManagerScreen extends State<TodosManagerScreen> {
     }
   }
 
+  void onTodoListItemDeletePressed(Todo todo) async {
+    try {
+      await todoProvider.deleteTodo(todo);
+      refreshTodos();
+    } catch (error) {
+      showSnackBar(context, message: error.toString());
+      logGenericError(error);
+    }
+  }
+
   void onChatMessageLongPress(ChatMessage chatItem) {
     Clipboard.setData(ClipboardData(text: chatItem.content)).then((value) {
       showToastMessage('Copied to Clipboard');
@@ -152,14 +172,18 @@ class _TodosManagerScreen extends State<TodosManagerScreen> {
           content: getPromptForTodosManager(prompt, userTodos),
           role: ChatRole.user)
     ]).then((response) async {
+      // get all intents, execute them so that db is updated
+      // then fetch list of todos and render it
       String botMessage = '${response['choices'][0]['message']['content']}';
       List<dynamic> intents = json.decode(botMessage)['intents'];
       await executeAllIntents(intents);
+      todos = await todoProvider.getTodos();
       setState(() {
         chatMessages = [
           ...chatMessages,
           ChatMessage(content: botMessage, role: ChatRole.assistant)
         ];
+        todos = todos;
       });
       logEvent(EventNames.openAiResponseSuccess, {});
     }).catchError((error) {
@@ -201,6 +225,7 @@ class _TodosManagerScreen extends State<TodosManagerScreen> {
                   var chatItem = chatMessages[index];
                   bool fromBot = chatItem.role == ChatRole.assistant;
                   bool fromSystem = chatItem.role == ChatRole.system;
+                  bool lastItemInList = index + 1 == chatMessages.length;
                   return GestureDetector(
                     onLongPress: () {
                       onChatMessageLongPress(chatItem);
@@ -212,7 +237,10 @@ class _TodosManagerScreen extends State<TodosManagerScreen> {
                             child: fromBot && index != 0
                                 ? TodosContainer(
                                     openAiResponse: chatItem.content,
-                                    todoProvider: todoProvider,
+                                    todos: todos,
+                                    lastItemInList: lastItemInList,
+                                    onDeletePressed:
+                                        onTodoListItemDeletePressed,
                                   )
                                 : MarkdownBody(data: chatItem.content),
                           ),
@@ -234,7 +262,7 @@ class _TodosManagerScreen extends State<TodosManagerScreen> {
                           minLines: 1,
                           maxLines: 4,
                           textInputType: TextInputType.multiline,
-                          hintText: 'A complete and clear instruction to bot'),
+                          hintText: 'A clear instruction to bot'),
                     ),
                   ),
                   Ink(

@@ -26,7 +26,8 @@ void _printRequest(
 }
 
 void _printResponse(int statusCode, String body) {
-  debugPrint('statusCode: $statusCode and body: $body');
+  debugPrint('statusCode: $statusCode and body:');
+  debugPrint(body);
 }
 
 List<int> successStatusCodes = [200, 201, 204];

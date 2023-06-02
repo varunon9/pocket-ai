@@ -6,7 +6,7 @@ import 'package:pocket_ai/src/widgets/custom_text.dart';
 
 class TodosList extends StatefulWidget {
   final List<Todo> todos;
-  final void Function(Todo) onDeletePressed;
+  final void Function(Todo)? onDeletePressed;
 
   const TodosList(
       {super.key, required this.todos, required this.onDeletePressed});
@@ -61,12 +61,14 @@ class _TodosList extends State<TodosList> {
                                     : null),
                           ),
                         ),
-                        IconButton(
-                            iconSize: 20,
-                            onPressed: () {
-                              widget.onDeletePressed(todo);
-                            },
-                            icon: const Icon(Icons.cancel_rounded))
+                        widget.onDeletePressed != null
+                            ? IconButton(
+                                iconSize: 20,
+                                onPressed: () {
+                                  widget.onDeletePressed!(todo);
+                                },
+                                icon: const Icon(Icons.cancel_rounded))
+                            : Container()
                       ],
                     ),
                     Container(
@@ -75,7 +77,8 @@ class _TodosList extends State<TodosList> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: todo.tasks
                                 .map((task) => Container(
-                                    margin: const EdgeInsets.only(bottom: 8),
+                                    margin: const EdgeInsets.only(
+                                        top: 4, bottom: 4),
                                     child: CustomText(
                                       '- ${task.title}',
                                       style: TextStyle(

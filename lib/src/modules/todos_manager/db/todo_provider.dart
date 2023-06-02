@@ -49,6 +49,9 @@ create table ${DbNames.tableTasks} (
     if (task.completed != null) {
       data[DbNames.tableTasksColCompleted] = task.completed!;
     }
+    if (task.todoId != null) {
+      data[DbNames.tableTasksColTodoId] = task.todoId!;
+    }
     await db!.update(DbNames.tableTasks, data,
         where: '${DbNames.tableTasksColId} = ?', whereArgs: [task.id]);
   }
