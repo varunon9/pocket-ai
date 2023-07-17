@@ -12,4 +12,11 @@ class DbNames {
   static String tableTasksColTitle = 'title';
   static String tableTasksColCompleted = 'completed';
   static String tableTasksColTodoId = 'todo_id';
+
+  static String databaseChatWithBot = 'chat_with_bot_database.db';
+
+  static String tableChatMessages = 'chat_messages';
+  static String tableChatMessagesColId = 'id';
+  static String tableChatMessagesColContent = 'content';
+  static String tableChatMessagesColRole = 'role';
 }

@@ -3,16 +3,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:pocket_ai/src/constants.dart';
+import 'package:pocket_ai/src/db/chat_with_bot_provider.dart';
 import 'package:pocket_ai/src/globals.dart';
 import 'package:pocket_ai/src/modules/chat/chat_actions.dart';
 import 'package:pocket_ai/src/modules/chat/models/chat_message.dart';
 import 'package:pocket_ai/src/modules/content_generator/screens/content_generator_screen.dart';
+import 'package:pocket_ai/src/modules/faqs/screens/faqs_screen.dart';
+import 'package:pocket_ai/src/modules/settings/screens/settings_screen.dart';
 import 'package:pocket_ai/src/modules/todos_manager/todos_manager_screen.dart';
 import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/common.dart';
 import 'package:pocket_ai/src/widgets/bot_or_user_message_bubble.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
-import 'package:pocket_ai/src/widgets/custom_popup_menu.dart';
 import 'package:pocket_ai/src/widgets/custom_text_form_field.dart';
 import 'package:pocket_ai/src/widgets/heading.dart';
 
@@ -36,6 +38,8 @@ class _ChatScreen extends State<ChatScreen> {
 
   TextEditingController userMessageController = TextEditingController();
   ScrollController listViewontroller = ScrollController();
+
+  ChatWithBotProvider chatWithBotProvider = ChatWithBotProvider();
 
   @override
   void initState() {
@@ -83,6 +87,26 @@ class _ChatScreen extends State<ChatScreen> {
         });
       }
     }
+
+    chatWithBotProvider.open().then((value) {
+      chatWithBotProvider.getChats().then((value) {
+        if (value.isNotEmpty) {
+          setState(() {
+            chatMessages = value;
+          });
+          scrollListToBottom();
+        } else {
+          chatWithBotProvider.insertChat(ChatMessage(
+              content: AiBotConstants.introMessage, role: ChatRole.assistant));
+        }
+      }).catchError((error) {
+        showSnackBar(context, message: error.toString());
+        logGenericError(error);
+      });
+    }).catchError((error) {
+      showSnackBar(context, message: error.toString());
+      logGenericError(error);
+    });
   }
 
   void onChatMessageLongPress(ChatMessage chatItem) {
@@ -102,6 +126,13 @@ class _ChatScreen extends State<ChatScreen> {
           .doc()
           .set({'message': userMessage, 'time': FieldValue.serverTimestamp()});
     }
+  }
+
+  void scrollListToBottom() {
+    // adding delay so that list view is scrolled after setState re-render has been completed
+    Future.delayed(const Duration(milliseconds: 100), () {
+      listViewontroller.jumpTo(listViewontroller.position.maxScrollExtent);
+    });
   }
 
   void onSendPress() {
@@ -124,11 +155,10 @@ class _ChatScreen extends State<ChatScreen> {
     });
     userMessageController.text = '';
 
-    // adding delay so that list view is scrolled after setState re-render has been completed
-    Future.delayed(const Duration(milliseconds: 100), () {
-      listViewontroller.jumpTo(listViewontroller.position.maxScrollExtent);
-    });
+    scrollListToBottom();
     saveUserMessageToFirestore(userMessage);
+    chatWithBotProvider
+        .insertChat(ChatMessage(content: userMessage, role: ChatRole.user));
 
     getResponseFromOpenAi([
       ...lastNMessages,
@@ -141,6 +171,8 @@ class _ChatScreen extends State<ChatScreen> {
           ChatMessage(content: botMessage, role: ChatRole.assistant)
         ];
       });
+      chatWithBotProvider.insertChat(
+          ChatMessage(content: botMessage, role: ChatRole.assistant));
       logEvent(EventNames.openAiResponseSuccess, {});
     }).catchError((error) {
       logApiErrorAndShowMessage(context, exception: error);
@@ -149,10 +181,39 @@ class _ChatScreen extends State<ChatScreen> {
       setState(() {
         apiCallInProgress = false;
       });
-      Future.delayed(const Duration(milliseconds: 100), () {
-        listViewontroller.jumpTo(listViewontroller.position.maxScrollExtent);
-      });
+      scrollListToBottom();
     });
+  }
+
+  void handlePopupMenuClick(BuildContext context, int item) {
+    switch (item) {
+      case 0:
+        logEvent(EventNames.resetChatWithBotClicked, {});
+        chatWithBotProvider.deleteChatMessages();
+        setState(() {
+          chatMessages = [
+            ChatMessage(
+                content: AiBotConstants.introMessage, role: ChatRole.assistant)
+          ];
+        });
+        break;
+      case 1:
+        logEvent(EventNames.contentGeneratorIconClicked, {});
+        navigateToScreen(context, ContentGeneratorScreen.routeName);
+        break;
+      case 2:
+        logEvent(EventNames.todosManagerIconClicked, {});
+        navigateToScreen(context, TodosManagerScreen.routeName);
+        break;
+      case 3:
+        logEvent(EventNames.helpIconClicked, {});
+        navigateToScreen(context, FaqsScreen.routeName);
+        break;
+      case 4:
+        logEvent(EventNames.settingsIconClicked, {});
+        navigateToScreen(context, SettingsScreen.routeName);
+        break;
+    }
   }
 
   @override
@@ -166,21 +227,23 @@ class _ChatScreen extends State<ChatScreen> {
           ),
           backgroundColor: CustomColors.darkBackground,
           actions: <Widget>[
-            IconButton(
-                tooltip: 'Content Generator',
-                onPressed: (() {
-                  logEvent(EventNames.contentGeneratorIconClicked, {});
-                  navigateToScreen(context, ContentGeneratorScreen.routeName);
-                }),
-                icon: const Icon(Icons.content_paste)),
-            IconButton(
-                tooltip: 'Todos Manager',
-                onPressed: (() {
-                  logEvent(EventNames.todosManagerIconClicked, {});
-                  navigateToScreen(context, TodosManagerScreen.routeName);
-                }),
-                icon: const Icon(Icons.checklist)),
-            const CustomPopupMenu(),
+            /*IconButton(
+                tooltip: 'AI Forum',
+                onPressed: (() {}),
+                icon: const Icon(Icons.content_paste)),*/
+            PopupMenuButton<int>(
+              onSelected: (item) => handlePopupMenuClick(context, item),
+              itemBuilder: (context) => [
+                const PopupMenuItem<int>(
+                    value: 0, child: Text('Reset Chat with Assistant')),
+                const PopupMenuItem<int>(
+                    value: 1, child: Text('Content Generator')),
+                const PopupMenuItem<int>(
+                    value: 2, child: Text('Todos Manager')),
+                const PopupMenuItem<int>(value: 3, child: Text('Help')),
+                const PopupMenuItem<int>(value: 4, child: Text('Settings')),
+              ],
+            ),
           ]),
       body: Stack(children: [
         Container(

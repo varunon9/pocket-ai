@@ -22,6 +22,7 @@ class EventNames {
   static String todosManagerIconClicked = 'todosManagerIconClicked';
   static String sendButtonInTodosManagerClicked =
       'sendButtonInTodosManagerClicked';
+  static String resetChatWithBotClicked = 'resetChatWithBotClicked';
 
   // API action events
   static String openAiResponseSuccess = 'openAiResponseSuccess';

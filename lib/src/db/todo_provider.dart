@@ -1,5 +1,5 @@
 import 'package:path/path.dart';
-import 'package:pocket_ai/src/modules/todos_manager/db/db_names.dart';
+import 'package:pocket_ai/src/db/db_names.dart';
 import 'package:pocket_ai/src/modules/todos_manager/models/todo.dart';
 import 'package:sqflite/sqflite.dart';
 

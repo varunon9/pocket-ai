@@ -6,7 +6,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:pocket_ai/src/constants.dart';
 import 'package:pocket_ai/src/modules/chat/chat_actions.dart';
 import 'package:pocket_ai/src/modules/chat/models/chat_message.dart';
-import 'package:pocket_ai/src/modules/todos_manager/db/todo_provider.dart';
+import 'package:pocket_ai/src/db/todo_provider.dart';
 import 'package:pocket_ai/src/modules/todos_manager/models/todo.dart';
 import 'package:pocket_ai/src/modules/todos_manager/models/todo_intent.dart';
 import 'package:pocket_ai/src/modules/todos_manager/widgets/todos_container.dart';
