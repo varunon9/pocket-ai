@@ -118,7 +118,7 @@ void saveAppSettingsToSharedPres(AppSettings appSettings) async {
 Future<AppSettings> getAppSettingsFromSharedPres() async {
   final prefs = await SharedPreferences.getInstance();
   return AppSettings(
-    maxTokensCount: prefs.getInt(SharedPrefsKeys.maxTokensCount) ?? 1500,
+    maxTokensCount: prefs.getInt(SharedPrefsKeys.maxTokensCount) ?? 500,
     openAiApiKey: prefs.getString(SharedPrefsKeys.openAiApiKey),
     generatedContentSignature:
         prefs.getString(SharedPrefsKeys.generatedContentSignature),

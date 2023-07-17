@@ -162,7 +162,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                         textInputType: TextInputType.number,
                         controller: maxTokensController,
                         onChanged: (value) => {},
-                        hintText: '1500'),
+                        hintText: '500'),
                   ),
                   const CustomText(
                     'Signature for generated content',

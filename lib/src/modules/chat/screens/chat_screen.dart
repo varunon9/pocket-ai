@@ -25,6 +25,8 @@ class ChatScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _ChatScreen();
 }
 
+int maxFreeSession = 3;
+
 class _ChatScreen extends State<ChatScreen> {
   List<ChatMessage> chatMessages = [
     ChatMessage(content: AiBotConstants.introMessage, role: ChatRole.assistant)
@@ -41,7 +43,7 @@ class _ChatScreen extends State<ChatScreen> {
     logEvent(EventNames.chatScreenViewed, {});
 
     // if user hasn't set his own api key then get one from Firestore
-    // only upto 5 sessions
+    // only upto maxFreeSession sessions
     if (Globals.appSettings.openAiApiKey == null ||
         Globals.appSettings.openAiApiKey == '') {
       String? deviceId = Globals.deviceId;
@@ -54,7 +56,7 @@ class _ChatScreen extends State<ChatScreen> {
         documentRef.get().then((response) {
           Map<String, dynamic>? data = response.data();
           int sessionCount = data == null ? 0 : data['count'];
-          if (sessionCount <= 5) {
+          if (sessionCount <= maxFreeSession) {
             // get open AI key and set to Globals
             db
                 .collection(FirestoreCollectionsConst.openAiApiKeys)
