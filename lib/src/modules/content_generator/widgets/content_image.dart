@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pocket_ai/src/globals.dart';
 import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/common.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
@@ -63,18 +62,7 @@ class _ContentImage extends State<ContentImage> {
                       color: CustomColors.darkText,
                       fontSize: 18,
                       fontWeight: FontWeight.bold),
-                )),
-                Globals.appSettings.generatedContentSignature != null &&
-                        Globals.appSettings.generatedContentSignature != ''
-                    ? Container(
-                        margin: const EdgeInsets.only(top: 12),
-                        child: Center(
-                            child: CustomText(
-                          Globals.appSettings.generatedContentSignature ?? '',
-                          style: const TextStyle(
-                              color: CustomColors.darkText, fontSize: 14),
-                        )))
-                    : Container()
+                ))
               ],
             ),
           ),

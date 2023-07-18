@@ -25,5 +25,5 @@ String androidPackageName = 'me.varunon9.pocket_ai';
 class SharedPrefsKeys {
   static String maxTokensCount = 'maxTokensCount';
   static String openAiApiKey = 'openAiApiKey';
-  static String generatedContentSignature = 'generatedContentSignature';
+  static String aiForumUsername = 'aiForumUsername';
 }

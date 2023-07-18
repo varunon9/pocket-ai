@@ -1,10 +1,10 @@
 class AppSettings {
   int maxTokensCount;
   String? openAiApiKey;
-  String? generatedContentSignature;
+  String? aiForumUsername;
 
   AppSettings(
       {required this.maxTokensCount,
       required this.openAiApiKey,
-      required this.generatedContentSignature});
+      required this.aiForumUsername});
 }

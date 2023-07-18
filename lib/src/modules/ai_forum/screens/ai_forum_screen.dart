@@ -77,7 +77,7 @@ class _AiForumScreen extends State<AiForumScreen> {
       db.collection(FirestoreCollectionsConst.aiForumMessages).doc().set({
         'content': message,
         'deviceId': Globals.deviceId,
-        'username': Globals.deviceId,
+        'username': Globals.appSettings.aiForumUsername,
         'time': FieldValue.serverTimestamp()
       });
     }
@@ -146,7 +146,7 @@ class _AiForumScreen extends State<AiForumScreen> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         CustomText(
-                                          '@${messageItem.deviceId}',
+                                          '@${(messageItem.username == null || messageItem.username == '') ? messageItem.deviceId : messageItem.username}',
                                           size: CustomTextSize.tiny,
                                         )
                                       ],

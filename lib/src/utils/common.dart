@@ -111,8 +111,8 @@ void saveAppSettingsToSharedPres(AppSettings appSettings) async {
       SharedPrefsKeys.maxTokensCount, appSettings.maxTokensCount);
   await prefs.setString(
       SharedPrefsKeys.openAiApiKey, appSettings.openAiApiKey ?? '');
-  await prefs.setString(SharedPrefsKeys.generatedContentSignature,
-      appSettings.generatedContentSignature ?? '');
+  await prefs.setString(
+      SharedPrefsKeys.aiForumUsername, appSettings.aiForumUsername ?? '');
 }
 
 Future<AppSettings> getAppSettingsFromSharedPres() async {
@@ -120,8 +120,7 @@ Future<AppSettings> getAppSettingsFromSharedPres() async {
   return AppSettings(
     maxTokensCount: prefs.getInt(SharedPrefsKeys.maxTokensCount) ?? 500,
     openAiApiKey: prefs.getString(SharedPrefsKeys.openAiApiKey),
-    generatedContentSignature:
-        prefs.getString(SharedPrefsKeys.generatedContentSignature),
+    aiForumUsername: prefs.getString(SharedPrefsKeys.aiForumUsername),
   );
 }
 

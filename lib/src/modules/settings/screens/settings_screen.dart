@@ -30,8 +30,7 @@ class SettingsScreen extends StatefulWidget {
 class _SettingsScreen extends State<SettingsScreen> {
   TextEditingController apiKeyController = TextEditingController();
   TextEditingController maxTokensController = TextEditingController();
-  TextEditingController generatedContentSignatureController =
-      TextEditingController();
+  TextEditingController aiForumUsernameController = TextEditingController();
   String appVersion = '';
   String buildNumber = '';
 
@@ -43,8 +42,7 @@ class _SettingsScreen extends State<SettingsScreen> {
       apiKeyController.text = Globals.appSettings.openAiApiKey ?? '';
     }
     maxTokensController.text = Globals.appSettings.maxTokensCount.toString();
-    generatedContentSignatureController.text =
-        Globals.appSettings.generatedContentSignature ?? '';
+    aiForumUsernameController.text = Globals.appSettings.aiForumUsername ?? '';
     PackageInfo.fromPlatform().then((PackageInfo packageInfo) {
       setState(() {
         appVersion = packageInfo.version;
@@ -62,11 +60,11 @@ class _SettingsScreen extends State<SettingsScreen> {
     }
     logEvent(EventNames.updateSettingsClicked, {});
     int maxTokensCount = int.parse(maxTokensController.text);
-    String generatedContentSignature = generatedContentSignatureController.text;
+    String aiForumUsername = aiForumUsernameController.text;
     AppSettings updatedAppSettings = AppSettings(
         maxTokensCount: maxTokensCount,
         openAiApiKey: openAiApiKey,
-        generatedContentSignature: generatedContentSignature);
+        aiForumUsername: aiForumUsername);
     Globals.appSettings = updatedAppSettings;
 
     saveAppSettingsToSharedPres(updatedAppSettings);
@@ -165,20 +163,20 @@ class _SettingsScreen extends State<SettingsScreen> {
                         hintText: '500'),
                   ),
                   const CustomText(
-                    'Signature for generated content',
+                    'AI forum username',
                     style: TextStyle(color: Colors.white),
                   ),
                   Container(
                       margin: const EdgeInsets.only(top: 4),
                       child: const CustomText(
-                        'This signature will be used in image created by generated content',
+                        'This name will be visible in your messages sent to Forum',
                         style: TextStyle(
                             color: CustomColors.lightText, fontSize: 11),
                       )),
                   Container(
                     margin: const EdgeInsets.only(top: 12, bottom: 24),
                     child: CustomTextFormField(
-                        controller: generatedContentSignatureController,
+                        controller: aiForumUsernameController,
                         onChanged: (value) => {},
                         hintText: '- Pocket AI'),
                   ),

@@ -18,7 +18,7 @@ class AiForumMessageBubble extends StatelessWidget {
   Widget build(BuildContext context) {
     return (Bubble(
         nip: messageFromSelf ? BubbleNip.rightTop : BubbleNip.leftTop,
-        margin: const BubbleEdges.only(top: 16, left: 8, right: 16),
+        margin: const BubbleEdges.only(top: 12, left: 8, right: 16, bottom: 4),
         color: messageFromSelf ? CustomColors.lightText : Colors.white,
         alignment: messageFromSelf ? Alignment.topRight : Alignment.topLeft,
         child: child));
