@@ -16,6 +16,8 @@ class FirestoreCollectionsConst {
   static String contentGeneratorPrompts = 'contentGeneratorPrompts';
   static String prompts = 'prompts';
   static String todosManagerPrompts = 'todosManagerPrompts';
+  static String aiForumMessages = 'aiForumMessages';
+  static String pocketAiAds = 'pocketAiAds';
 }
 
 String androidPackageName = 'me.varunon9.pocket_ai';

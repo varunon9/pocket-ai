@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:pocket_ai/firebase_options.dart';
+import 'package:pocket_ai/src/modules/ai_forum/screens/ai_forum_screen.dart';
 import 'package:pocket_ai/src/modules/chat/screens/chat_screen.dart';
 import 'package:pocket_ai/src/modules/faqs/screens/faqs_screen.dart';
 import 'package:pocket_ai/src/modules/content_generator/screens/content_generator_screen.dart';
@@ -58,6 +59,7 @@ class MyApp extends StatelessWidget {
         ContentGeneratorScreen.routeName: (context) =>
             const ContentGeneratorScreen(),
         TodosManagerScreen.routeName: (context) => const TodosManagerScreen(),
+        AiForumScreen.routeName: (context) => const AiForumScreen(),
       },
     );
   }

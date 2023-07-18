@@ -179,3 +179,10 @@ String getFormattedDate(DateTime dateTime) {
   String monthName = months[dateTime.month - 1];
   return '${dateTime.day.toString().padLeft(2, '0')} $monthName, ${dateTime.hour.toString().padLeft(2, '0')}:${dateTime.minute.toString().padLeft(2, '0')}';
 }
+
+String getFormattedTime(DateTime dateTime) {
+  String hour = dateTime.hour.toString().padLeft(2, '0');
+  String minute = dateTime.minute.toString().padLeft(2, '0');
+  String period = dateTime.hour < 12 ? 'AM' : 'PM';
+  return '$hour:$minute $period';
+}

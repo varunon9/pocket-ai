@@ -5,6 +5,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:pocket_ai/src/constants.dart';
 import 'package:pocket_ai/src/db/chat_with_bot_provider.dart';
 import 'package:pocket_ai/src/globals.dart';
+import 'package:pocket_ai/src/modules/ai_forum/screens/ai_forum_screen.dart';
 import 'package:pocket_ai/src/modules/chat/chat_actions.dart';
 import 'package:pocket_ai/src/modules/chat/models/chat_message.dart';
 import 'package:pocket_ai/src/modules/content_generator/screens/content_generator_screen.dart';
@@ -15,6 +16,7 @@ import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/common.dart';
 import 'package:pocket_ai/src/widgets/bot_or_user_message_bubble.dart';
 import 'package:pocket_ai/src/widgets/custom_colors.dart';
+import 'package:pocket_ai/src/widgets/custom_text.dart';
 import 'package:pocket_ai/src/widgets/custom_text_form_field.dart';
 import 'package:pocket_ai/src/widgets/heading.dart';
 
@@ -227,10 +229,11 @@ class _ChatScreen extends State<ChatScreen> {
           ),
           backgroundColor: CustomColors.darkBackground,
           actions: <Widget>[
-            /*IconButton(
-                tooltip: 'AI Forum',
-                onPressed: (() {}),
-                icon: const Icon(Icons.content_paste)),*/
+            TextButton(
+                onPressed: (() {
+                  navigateToScreen(context, AiForumScreen.routeName);
+                }),
+                child: const CustomText('AI Forum')),
             PopupMenuButton<int>(
               onSelected: (item) => handlePopupMenuClick(context, item),
               itemBuilder: (context) => [

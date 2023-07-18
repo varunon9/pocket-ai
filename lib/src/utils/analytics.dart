@@ -8,6 +8,7 @@ class EventNames {
   static String settingsScreenViewed = 'settingsScreenViewed';
   static String contentGeneratorScreenViewed = 'contentGeneratorScreenViewed';
   static String todosManagerScreenViewed = 'todosManagerScreenViewed';
+  static String aiForumScreenViewed = 'aiForumScreenViewed';
 
   // CTA click events
   static String sendMessageClicked = 'sendMessageClicked';
@@ -23,6 +24,8 @@ class EventNames {
   static String sendButtonInTodosManagerClicked =
       'sendButtonInTodosManagerClicked';
   static String resetChatWithBotClicked = 'resetChatWithBotClicked';
+  static String sendAiForumMessageClicked = 'sendAiForumMessageClicked';
+  static String pocketAiAdsClicked = 'pocketAiAdsClicked';
 
   // API action events
   static String openAiResponseSuccess = 'openAiResponseSuccess';
@@ -36,6 +39,7 @@ class EventParams {
   static String routeName = 'routeName';
   static String ctaName = 'ctaName';
   static String userMessage = 'userMessage';
+  static String id = 'id';
 }
 
 // https://pub.dev/packages/firebase_analytics/example
