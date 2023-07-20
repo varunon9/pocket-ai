@@ -23,6 +23,7 @@ class _SplashScreen extends State<SplashScreen> {
     if (deviceId != null) {
       FirebaseCrashlytics.instance.setUserIdentifier(deviceId);
       FirebaseAnalytics.instance.setUserId(id: deviceId);
+      debugPrint(Globals.deviceId);
     }
 
     return ChatScreen.routeName;

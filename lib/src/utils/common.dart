@@ -185,3 +185,10 @@ String getFormattedTime(DateTime dateTime) {
   String period = dateTime.hour < 12 ? 'AM' : 'PM';
   return '$hour:$minute $period';
 }
+
+bool isEmpty(String? value) {
+  if (value == null || value == '') {
+    return true;
+  }
+  return false;
+}

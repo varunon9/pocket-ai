@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:pocket_ai/firebase_options.dart';
+import 'package:pocket_ai/src/constants.dart';
+import 'package:pocket_ai/src/globals.dart';
 import 'package:pocket_ai/src/modules/ai_forum/screens/ai_forum_screen.dart';
 import 'package:pocket_ai/src/modules/chat/screens/chat_screen.dart';
 import 'package:pocket_ai/src/modules/faqs/screens/faqs_screen.dart';
@@ -27,10 +30,37 @@ void main() async {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  @override
+  State<StatefulWidget> createState() => _MyApp();
+}
+
+class _MyApp extends State<MyApp> with WidgetsBindingObserver {
   // This widget is the root of your application.
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    FirebaseFirestore db = FirebaseFirestore.instance;
+    if (state == AppLifecycleState.resumed) {
+      // user can be marked online (populating Globals field here instead of splash screen would be required)
+      // currently being taken care in chat_screen
+    } else {
+      // mark user as offline
+      DocumentReference<Map<String, dynamic>> documentRef = db
+          .collection(FirestoreCollectionsConst.userSessionsCount)
+          .doc(Globals.deviceId);
+      documentRef
+          .update({'lastSeen': FieldValue.serverTimestamp(), 'online': false});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

@@ -33,6 +33,12 @@ class _AiForumScreen extends State<AiForumScreen> {
               DateTime.now().subtract(const Duration(hours: 24)))
       .orderBy('time', descending: false)
       .snapshots();
+
+  final Stream<QuerySnapshot> onlineUserSessionsStream = FirebaseFirestore
+      .instance
+      .collection(FirestoreCollectionsConst.userSessionsCount)
+      .where('online', isEqualTo: true)
+      .snapshots();
   final List<PocketAiAd> pocketAiAds = [];
 
   TextEditingController aiForumMessageController = TextEditingController();
@@ -46,6 +52,7 @@ class _AiForumScreen extends State<AiForumScreen> {
 
     db
         .collection(FirestoreCollectionsConst.pocketAiAds)
+        .where('visible', isEqualTo: true)
         .orderBy('index')
         .get()
         .then((response) {
@@ -88,9 +95,26 @@ class _AiForumScreen extends State<AiForumScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Heading(
-            'AI Forum',
-            type: HeadingType.h4,
+          title: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Heading(
+                'AI Forum',
+                type: HeadingType.h4,
+              ),
+              Container(
+                  margin: const EdgeInsets.only(left: 12, right: 4),
+                  child: const Icon(
+                    Icons.person,
+                    color: CustomColors.primary,
+                  )),
+              StreamBuilder<QuerySnapshot>(
+                  stream: onlineUserSessionsStream,
+                  builder: (BuildContext context,
+                      AsyncSnapshot<QuerySnapshot> snapshot) {
+                    return CustomText("${snapshot.data?.docs.length}");
+                  })
+            ],
           ),
           backgroundColor: CustomColors.darkBackground,
           actions: const <Widget>[

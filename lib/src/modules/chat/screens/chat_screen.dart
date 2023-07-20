@@ -50,46 +50,48 @@ class _ChatScreen extends State<ChatScreen> {
 
     // if user hasn't set his own api key then get one from Firestore
     // only upto maxFreeSession sessions
-    if (Globals.appSettings.openAiApiKey == null ||
-        Globals.appSettings.openAiApiKey == '') {
-      String? deviceId = Globals.deviceId;
-      if (deviceId != null) {
-        DocumentReference<Map<String, dynamic>> documentRef = db
-            .collection(FirestoreCollectionsConst.userSessionsCount)
-            .doc(deviceId);
-        // get session count
-        documentRef.get().then((response) {
-          Map<String, dynamic>? data = response.data();
-          int sessionsCountFromFirestore = data == null ? 0 : data['count'];
-          setState(() {
-            sessionsCount = sessionsCountFromFirestore;
-          });
-          if (sessionsCountFromFirestore <= Globals.maxFreeSessions) {
-            // get open AI key and set to Globals
-            db
-                .collection(FirestoreCollectionsConst.openAiApiKeys)
-                .get()
-                .then((response) {
-              if (response.docs.isNotEmpty) {
-                Map<String, dynamic>? data = response.docs[0].data();
-                Globals.freeOpenAiApiKey = data['apiKey'];
-                Globals.appSettings.openAiApiKey = data['apiKey'];
-              }
-            }).catchError((error) {
-              showSnackBar(context, message: error.toString());
-            });
-          }
-          // increase the session count in Firestore
-          documentRef.set({
-            'count': sessionsCountFromFirestore + 1,
-            'createdAt': (data == null || data['createdAt'] == null)
-                ? FieldValue.serverTimestamp()
-                : data['createdAt']
-          });
-        }).catchError((error) {
-          showSnackBar(context, message: error.toString());
+
+    String? deviceId = Globals.deviceId;
+    if (deviceId != null) {
+      DocumentReference<Map<String, dynamic>> documentRef = db
+          .collection(FirestoreCollectionsConst.userSessionsCount)
+          .doc(deviceId);
+      // get session count
+      documentRef.get().then((response) {
+        Map<String, dynamic>? data = response.data();
+        int sessionsCountFromFirestore = data == null ? 0 : data['count'];
+        setState(() {
+          sessionsCount = sessionsCountFromFirestore;
         });
-      }
+        if (isEmpty(Globals.appSettings.openAiApiKey) &&
+            sessionsCountFromFirestore <= Globals.maxFreeSessions) {
+          // get open AI key and set to Globals
+          db
+              .collection(FirestoreCollectionsConst.openAiApiKeys)
+              .get()
+              .then((response) {
+            if (response.docs.isNotEmpty) {
+              Map<String, dynamic>? data = response.docs[0].data();
+              Globals.freeOpenAiApiKey = data['apiKey'];
+              Globals.appSettings.openAiApiKey = data['apiKey'];
+            }
+          }).catchError((error) {
+            showSnackBar(context, message: error.toString());
+          });
+        }
+        // increase the session count in Firestore
+        documentRef.set({
+          'count': sessionsCountFromFirestore + 1,
+          'createdAt': (data == null || data['createdAt'] == null)
+              ? FieldValue.serverTimestamp()
+              : data['createdAt'],
+          'lastSeen': FieldValue.serverTimestamp(),
+          'online': true
+        });
+      }).catchError((error) {
+        showSnackBar(context, message: error.toString());
+        logGenericError(error);
+      });
     }
 
     chatWithBotProvider.open().then((value) {
@@ -227,6 +229,8 @@ class _ChatScreen extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
+    bool showFreeSessionsInfoBanner =
+        sessionsCount != null && isEmpty(Globals.appSettings.openAiApiKey);
     return Scaffold(
       appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -256,9 +260,8 @@ class _ChatScreen extends State<ChatScreen> {
             ),
           ]),
       body: Stack(children: [
-        sessionsCount == null
-            ? Container()
-            : Container(
+        showFreeSessionsInfoBanner
+            ? Container(
                 margin: const EdgeInsets.all(12),
                 padding: const EdgeInsets.all(12),
                 width: double.infinity,
@@ -270,7 +273,7 @@ class _ChatScreen extends State<ChatScreen> {
                   children: [
                     CustomText(
                       sessionsCount! > Globals.maxFreeSessions
-                          ? "You do not have any free sessions left. Please use your own OpenAI API key in settings to keep using PocketAI"
+                          ? "You do not have any free sessions left. Please use your own OpenAI API key in Settings to keep using PocketAI"
                           : "You have ${Globals.maxFreeSessions - sessionsCount!} free sessions remaining out of ${Globals.maxFreeSessions}",
                       size: CustomTextSize.small,
                     ),
@@ -286,10 +289,11 @@ class _ChatScreen extends State<ChatScreen> {
                                   decoration: TextDecoration.underline),
                             )))
                   ],
-                )),
+                ))
+            : Container(),
         Container(
             margin: EdgeInsets.only(
-                bottom: 72, top: (sessionsCount == null ? 0 : 72)),
+                bottom: 72, top: (showFreeSessionsInfoBanner ? 72 : 0)),
             child: ListView.builder(
                 controller: listViewontroller,
                 itemCount: chatMessages.length,

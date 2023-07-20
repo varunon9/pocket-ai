@@ -7,6 +7,7 @@ class PocketAiAd {
   final int? index;
   final String? backgroundColor;
   final String? contentColor;
+  final bool? visible;
 
   PocketAiAd(
       {this.description,
@@ -16,7 +17,8 @@ class PocketAiAd {
       this.title,
       this.index,
       this.backgroundColor,
-      this.contentColor});
+      this.contentColor,
+      this.visible});
 
   factory PocketAiAd.fromJson(Map<String, dynamic> jsonData) {
     return PocketAiAd(
@@ -28,6 +30,7 @@ class PocketAiAd {
       index: jsonData['index'] as int?,
       backgroundColor: jsonData['backgroundColor'] as String?,
       contentColor: jsonData['contentColor'] as String?,
+      visible: jsonData['visible'] as bool?,
     );
   }
 
@@ -39,7 +42,8 @@ class PocketAiAd {
         'title': title,
         'index': index,
         'backgroundColor': backgroundColor,
-        'contentColor': contentColor
+        'contentColor': contentColor,
+        'visible': visible
       };
 
   @override
