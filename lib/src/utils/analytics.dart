@@ -26,6 +26,8 @@ class EventNames {
   static String resetChatWithBotClicked = 'resetChatWithBotClicked';
   static String sendAiForumMessageClicked = 'sendAiForumMessageClicked';
   static String pocketAiAdsClicked = 'pocketAiAdsClicked';
+  static String freeSessionsInfoKnowMoreClicked =
+      'freeSessionsInfoKnowMoreClicked';
 
   // API action events
   static String openAiResponseSuccess = 'openAiResponseSuccess';

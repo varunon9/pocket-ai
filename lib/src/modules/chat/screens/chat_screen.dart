@@ -29,8 +29,6 @@ class ChatScreen extends StatefulWidget {
   State<StatefulWidget> createState() => _ChatScreen();
 }
 
-int maxFreeSession = 3;
-
 class _ChatScreen extends State<ChatScreen> {
   List<ChatMessage> chatMessages = [
     ChatMessage(content: AiBotConstants.introMessage, role: ChatRole.assistant)
@@ -43,6 +41,8 @@ class _ChatScreen extends State<ChatScreen> {
 
   ChatWithBotProvider chatWithBotProvider = ChatWithBotProvider();
 
+  int? sessionsCount;
+
   @override
   void initState() {
     super.initState();
@@ -53,7 +53,6 @@ class _ChatScreen extends State<ChatScreen> {
     if (Globals.appSettings.openAiApiKey == null ||
         Globals.appSettings.openAiApiKey == '') {
       String? deviceId = Globals.deviceId;
-      // todo: would deviceId ever be null?
       if (deviceId != null) {
         DocumentReference<Map<String, dynamic>> documentRef = db
             .collection(FirestoreCollectionsConst.userSessionsCount)
@@ -61,8 +60,11 @@ class _ChatScreen extends State<ChatScreen> {
         // get session count
         documentRef.get().then((response) {
           Map<String, dynamic>? data = response.data();
-          int sessionCount = data == null ? 0 : data['count'];
-          if (sessionCount <= maxFreeSession) {
+          int sessionsCountFromFirestore = data == null ? 0 : data['count'];
+          setState(() {
+            sessionsCount = sessionsCountFromFirestore;
+          });
+          if (sessionsCountFromFirestore <= Globals.maxFreeSessions) {
             // get open AI key and set to Globals
             db
                 .collection(FirestoreCollectionsConst.openAiApiKeys)
@@ -79,7 +81,7 @@ class _ChatScreen extends State<ChatScreen> {
           }
           // increase the session count in Firestore
           documentRef.set({
-            'count': sessionCount + 1,
+            'count': sessionsCountFromFirestore + 1,
             'createdAt': (data == null || data['createdAt'] == null)
                 ? FieldValue.serverTimestamp()
                 : data['createdAt']
@@ -218,6 +220,11 @@ class _ChatScreen extends State<ChatScreen> {
     }
   }
 
+  void onFreeSessionsInfoTextTap() {
+    logEvent(EventNames.freeSessionsInfoKnowMoreClicked, {});
+    navigateToScreen(context, FaqsScreen.routeName);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -249,8 +256,40 @@ class _ChatScreen extends State<ChatScreen> {
             ),
           ]),
       body: Stack(children: [
+        sessionsCount == null
+            ? Container()
+            : Container(
+                margin: const EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12),
+                width: double.infinity,
+                decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    color: CustomColors.lightText),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CustomText(
+                      sessionsCount! > Globals.maxFreeSessions
+                          ? "You do not have any free sessions left. Please use your own OpenAI API key in settings to keep using PocketAI"
+                          : "You have ${Globals.maxFreeSessions - sessionsCount!} free sessions remaining out of ${Globals.maxFreeSessions}",
+                      size: CustomTextSize.small,
+                    ),
+                    GestureDetector(
+                        onTap: onFreeSessionsInfoTextTap,
+                        child: Container(
+                            padding: const EdgeInsets.only(top: 4),
+                            child: const CustomText(
+                              'Know more',
+                              size: CustomTextSize.small,
+                              style: TextStyle(
+                                  color: CustomColors.hyperlink,
+                                  decoration: TextDecoration.underline),
+                            )))
+                  ],
+                )),
         Container(
-            margin: const EdgeInsets.only(bottom: 72),
+            margin: EdgeInsets.only(
+                bottom: 72, top: (sessionsCount == null ? 0 : 72)),
             child: ListView.builder(
                 controller: listViewontroller,
                 itemCount: chatMessages.length,

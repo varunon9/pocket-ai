@@ -160,7 +160,7 @@ class _SettingsScreen extends State<SettingsScreen> {
                         textInputType: TextInputType.number,
                         controller: maxTokensController,
                         onChanged: (value) => {},
-                        hintText: '500'),
+                        hintText: '1000'),
                   ),
                   const CustomText(
                     'AI forum username',

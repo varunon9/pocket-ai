@@ -9,4 +9,5 @@ class CustomColors {
   static const Color darkBackground = Color(0xFF0F1010);
   static const Color lightSecondary = Color(0xFF495962);
   static const Color darkText = Color(0xFF151515);
+  static const Color hyperlink = Color(0xFF0000EE);
 }
