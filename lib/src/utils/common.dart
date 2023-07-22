@@ -14,7 +14,10 @@ import 'package:pocket_ai/src/modules/settings/models/app_settings.dart';
 import 'package:pocket_ai/src/utils/analytics.dart';
 import 'package:pocket_ai/src/utils/api_exception.dart';
 import 'package:pocket_ai/src/widgets/custom_text.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 void showSnackBar(BuildContext context, {required String message}) {
   final scaffold = ScaffoldMessenger.of(context);
@@ -115,7 +118,7 @@ void saveAppSettingsToSharedPres(AppSettings appSettings) async {
       SharedPrefsKeys.aiForumUsername, appSettings.aiForumUsername ?? '');
 }
 
-Future<AppSettings> getAppSettingsFromSharedPres() async {
+Future<AppSettings> getAppSettingsFromSharedPrefs() async {
   final prefs = await SharedPreferences.getInstance();
   return AppSettings(
     maxTokensCount: prefs.getInt(SharedPrefsKeys.maxTokensCount) ?? 1500,
@@ -191,4 +194,35 @@ bool isEmpty(String? value) {
     return true;
   }
   return false;
+}
+
+void onRatePocketAiPressed() async {
+  if (Platform.isAndroid || Platform.isIOS) {
+    // todo support for ios
+    final appId = Platform.isAndroid ? androidPackageName : 'YOUR_IOS_APP_ID';
+    final url = Uri.parse(
+      Platform.isAndroid
+          ? "market://details?id=$appId"
+          : "https://apps.apple.com/app/id$appId",
+    );
+    bool canLaunchIntent = await canLaunchUrl(url);
+    if (canLaunchIntent) {
+      launchUrl(
+        url,
+        mode: LaunchMode.externalApplication,
+      );
+    } else {
+      launchUrlString(
+          'https://play.google.com/store/apps/details?id=$androidPackageName');
+    }
+  }
+}
+
+void onSharePocketAiPressed() async {
+  try {
+    Share.share(
+        'Check out Pocket-AI, a Chat-GPT-3.5 powered AI assistant: https://play.google.com/store/apps/details?id=$androidPackageName');
+  } catch (error) {
+    logGenericError(error);
+  }
 }

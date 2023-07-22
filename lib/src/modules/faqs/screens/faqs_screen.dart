@@ -69,21 +69,11 @@ class _FaqsScreen extends State<FaqsScreen> {
   Widget build(BuildContext context) {
     return (Scaffold(
         appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: const Heading(
-            'Knowledge Center & FAQs',
-            type: HeadingType.h4,
-          ),
-          backgroundColor: CustomColors.darkBackground,
-          actions: <Widget>[
-            IconButton(
-                tooltip: 'Back',
-                onPressed: (() {
-                  goBack(context);
-                }),
-                icon: const Icon(Icons.arrow_back))
-          ],
-        ),
+            title: const Heading(
+              'Knowledge Center & FAQs',
+              type: HeadingType.h4,
+            ),
+            backgroundColor: CustomColors.darkBackground),
         body: Container(
             //padding: const EdgeInsets.all(16),
             color: CustomColors.darkBackground,

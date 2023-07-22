@@ -1,8 +1,5 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:pocket_ai/src/constants.dart';
 import 'package:pocket_ai/src/globals.dart';
 import 'package:pocket_ai/src/modules/faqs/screens/faqs_screen.dart';
 import 'package:pocket_ai/src/modules/settings/models/app_settings.dart';
@@ -15,8 +12,6 @@ import 'package:pocket_ai/src/widgets/custom_text_form_field.dart';
 import 'package:pocket_ai/src/widgets/heading.dart';
 import 'package:pocket_ai/src/widgets/link_text.dart';
 import 'package:pocket_ai/src/widgets/scroll_view_with_height.dart';
-import 'package:url_launcher/url_launcher.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({Key? key}) : super(key: key);
@@ -78,45 +73,18 @@ class _SettingsScreen extends State<SettingsScreen> {
 
   void onRateThisAppPress() async {
     logEvent(EventNames.rateAppClicked, {});
-    if (Platform.isAndroid || Platform.isIOS) {
-      // todo support for ios
-      final appId = Platform.isAndroid ? androidPackageName : 'YOUR_IOS_APP_ID';
-      final url = Uri.parse(
-        Platform.isAndroid
-            ? "market://details?id=$appId"
-            : "https://apps.apple.com/app/id$appId",
-      );
-      bool canLaunchIntent = await canLaunchUrl(url);
-      if (canLaunchIntent) {
-        launchUrl(
-          url,
-          mode: LaunchMode.externalApplication,
-        );
-      } else {
-        launchUrlString(
-            'https://play.google.com/store/apps/details?id=$androidPackageName');
-      }
-    }
+    onRatePocketAiPressed();
   }
 
   @override
   Widget build(BuildContext context) {
     return (Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: false,
         title: const Heading(
           'Settings',
           type: HeadingType.h4,
         ),
         backgroundColor: CustomColors.darkBackground,
-        actions: <Widget>[
-          IconButton(
-              tooltip: 'Back',
-              onPressed: (() {
-                goBack(context);
-              }),
-              icon: const Icon(Icons.arrow_back))
-        ],
       ),
       body: ScrollViewWithHeight(
           child: Container(

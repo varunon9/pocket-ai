@@ -14,13 +14,11 @@ class EventNames {
   static String sendMessageClicked = 'sendMessageClicked';
   static String helpIconClicked = 'helpIconClicked';
   static String settingsIconClicked = 'settingsIconClicked';
-  static String contentGeneratorIconClicked = 'contentGeneratorIconClicked';
   static String updateSettingsClicked = 'updateSettingsClicked';
   static String faqsClicked = 'faqsClicked';
   static String rateAppClicked = 'rateAppClicked';
   static String generateContentClicked = 'generateContentClicked';
   static String shareGeneratedContentClicked = 'shareGeneratedContentClicked';
-  static String todosManagerIconClicked = 'todosManagerIconClicked';
   static String sendButtonInTodosManagerClicked =
       'sendButtonInTodosManagerClicked';
   static String resetChatWithBotClicked = 'resetChatWithBotClicked';
@@ -28,6 +26,14 @@ class EventNames {
   static String pocketAiAdsClicked = 'pocketAiAdsClicked';
   static String freeSessionsInfoKnowMoreClicked =
       'freeSessionsInfoKnowMoreClicked';
+  static String navDrawerAiForumClicked = 'navDrawerAiForumClicked';
+  static String navDrawerContentGeneratorClicked =
+      'navDrawerContentGeneratorClicked';
+  static String navDrawerTodosManagerClicked = 'navDrawerTodosManagerClicked';
+  static String navDrawerHelpClicked = 'navDrawerHelpClicked';
+  static String navDrawerSettingsClicked = 'navDrawerSettingsClicked';
+  static String navDrawerRateAppClicked = 'navDrawerRateAppClicked';
+  static String navDrawerShareAppClicked = 'navDrawerShareAppClicked';
 
   // API action events
   static String openAiResponseSuccess = 'openAiResponseSuccess';

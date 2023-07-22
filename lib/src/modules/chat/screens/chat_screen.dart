@@ -8,6 +8,8 @@ import 'package:pocket_ai/src/globals.dart';
 import 'package:pocket_ai/src/modules/ai_forum/screens/ai_forum_screen.dart';
 import 'package:pocket_ai/src/modules/chat/chat_actions.dart';
 import 'package:pocket_ai/src/modules/chat/models/chat_message.dart';
+import 'package:pocket_ai/src/modules/chat/models/drawer_menu_item.dart';
+import 'package:pocket_ai/src/modules/chat/widgets/custom_navigation_drawer.dart';
 import 'package:pocket_ai/src/modules/content_generator/screens/content_generator_screen.dart';
 import 'package:pocket_ai/src/modules/faqs/screens/faqs_screen.dart';
 import 'package:pocket_ai/src/modules/settings/screens/settings_screen.dart';
@@ -191,6 +193,46 @@ class _ChatScreen extends State<ChatScreen> {
     });
   }
 
+  void onDrawerItemTapped(DrawerMenuItemsIds id) {
+    switch (id) {
+      case DrawerMenuItemsIds.aiForum:
+        {
+          navigateToScreen(context, AiForumScreen.routeName);
+          break;
+        }
+      case DrawerMenuItemsIds.contentGenerator:
+        {
+          navigateToScreen(context, ContentGeneratorScreen.routeName);
+          break;
+        }
+      case DrawerMenuItemsIds.todosManager:
+        {
+          navigateToScreen(context, TodosManagerScreen.routeName);
+          break;
+        }
+      case DrawerMenuItemsIds.help:
+        {
+          navigateToScreen(context, FaqsScreen.routeName);
+          break;
+        }
+      case DrawerMenuItemsIds.settings:
+        {
+          navigateToScreen(context, SettingsScreen.routeName);
+          break;
+        }
+      case DrawerMenuItemsIds.rateApp:
+        {
+          onRatePocketAiPressed();
+          break;
+        }
+      case DrawerMenuItemsIds.shareApp:
+        {
+          onSharePocketAiPressed();
+          break;
+        }
+    }
+  }
+
   void handlePopupMenuClick(BuildContext context, int item) {
     switch (item) {
       case 0:
@@ -202,22 +244,6 @@ class _ChatScreen extends State<ChatScreen> {
                 content: AiBotConstants.introMessage, role: ChatRole.assistant)
           ];
         });
-        break;
-      case 1:
-        logEvent(EventNames.contentGeneratorIconClicked, {});
-        navigateToScreen(context, ContentGeneratorScreen.routeName);
-        break;
-      case 2:
-        logEvent(EventNames.todosManagerIconClicked, {});
-        navigateToScreen(context, TodosManagerScreen.routeName);
-        break;
-      case 3:
-        logEvent(EventNames.helpIconClicked, {});
-        navigateToScreen(context, FaqsScreen.routeName);
-        break;
-      case 4:
-        logEvent(EventNames.settingsIconClicked, {});
-        navigateToScreen(context, SettingsScreen.routeName);
         break;
     }
   }
@@ -232,30 +258,19 @@ class _ChatScreen extends State<ChatScreen> {
     bool showFreeSessionsInfoBanner =
         sessionsCount != null && isEmpty(Globals.appSettings.openAiApiKey);
     return Scaffold(
+      drawer: CustomNavigationDrawer(onItemTapped: onDrawerItemTapped),
       appBar: AppBar(
-          automaticallyImplyLeading: false,
           title: const Heading(
             'Pocket AI',
             type: HeadingType.h4,
           ),
           backgroundColor: CustomColors.darkBackground,
           actions: <Widget>[
-            TextButton(
-                onPressed: (() {
-                  navigateToScreen(context, AiForumScreen.routeName);
-                }),
-                child: const CustomText('AI Forum')),
             PopupMenuButton<int>(
               onSelected: (item) => handlePopupMenuClick(context, item),
               itemBuilder: (context) => [
                 const PopupMenuItem<int>(
                     value: 0, child: Text('Reset Chat with Assistant')),
-                const PopupMenuItem<int>(
-                    value: 1, child: Text('Content Generator')),
-                const PopupMenuItem<int>(
-                    value: 2, child: Text('Todos Manager')),
-                const PopupMenuItem<int>(value: 3, child: Text('Help')),
-                const PopupMenuItem<int>(value: 4, child: Text('Settings')),
               ],
             ),
           ]),
