@@ -102,17 +102,18 @@ class _AiForumScreen extends State<AiForumScreen> {
                 'AI Forum',
                 type: HeadingType.h4,
               ),
-              Container(
-                  margin: const EdgeInsets.only(left: 12, right: 4),
-                  child: const Icon(
-                    Icons.person,
-                    color: CustomColors.primary,
-                  )),
               StreamBuilder<QuerySnapshot>(
                   stream: onlineUserSessionsStream,
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
-                    return CustomText("${snapshot.data?.docs.length ?? 0}");
+                    return Container(
+                      margin: const EdgeInsets.only(left: 8),
+                      child: CustomText(
+                        "(Online users: ${snapshot.data?.docs.length ?? 0})",
+                        size: CustomTextSize.small,
+                        style: const TextStyle(color: CustomColors.primary),
+                      ),
+                    );
                   })
             ],
           ),
@@ -152,42 +153,67 @@ class _AiForumScreen extends State<AiForumScreen> {
                             AiForumMessage.fromJson(data);
                         bool messageFromSelf =
                             messageItem.deviceId == Globals.deviceId;
+                        String? username = isEmpty(messageItem.username)
+                            ? messageItem.deviceId
+                            : messageItem.username;
                         return GestureDetector(
                           onLongPress: () {
                             onAiForumMessageLongPress(messageItem);
                           },
-                          child: AiForumMessageBubble(
-                            messageFromSelf: messageFromSelf,
-                            message: messageItem,
-                            child: Column(
+                          child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Container(
-                                    margin: const EdgeInsets.only(bottom: 8),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        CustomText(
-                                          '@${(messageItem.username == null || messageItem.username == '') ? messageItem.deviceId : messageItem.username}',
-                                          size: CustomTextSize.tiny,
-                                        )
-                                      ],
-                                    )),
-                                MarkdownBody(
-                                    data: messageItem.content ?? 'Null'),
-                                Container(
-                                    margin: const EdgeInsets.only(top: 8),
-                                    child: CustomText(
-                                      messageItem.time == null
-                                          ? ''
-                                          : getFormattedTime(messageItem.time!),
-                                      size: CustomTextSize.tiny,
-                                    ))
-                              ],
-                            ),
-                          ),
+                                  padding: const EdgeInsets.all(4),
+                                  margin:
+                                      const EdgeInsets.only(top: 12, left: 12),
+                                  decoration: BoxDecoration(
+                                      color: CustomColors.secondary,
+                                      shape: BoxShape.circle,
+                                      border: Border.all()),
+                                  child: const Icon(
+                                    Icons.person,
+                                    color: Colors.white,
+                                    size: 16,
+                                  ),
+                                ),
+                                Expanded(
+                                    child: AiForumMessageBubble(
+                                  messageFromSelf: messageFromSelf,
+                                  message: messageItem,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                          margin:
+                                              const EdgeInsets.only(bottom: 8),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              CustomText(
+                                                '@$username',
+                                                size: CustomTextSize.tiny,
+                                              )
+                                            ],
+                                          )),
+                                      MarkdownBody(
+                                          data: messageItem.content ?? 'Null'),
+                                      Container(
+                                          margin: const EdgeInsets.only(top: 8),
+                                          child: CustomText(
+                                            messageItem.time == null
+                                                ? ''
+                                                : getFormattedTime(
+                                                    messageItem.time!),
+                                            size: CustomTextSize.tiny,
+                                          ))
+                                    ],
+                                  ),
+                                ))
+                              ]),
                         );
                       })
                       .toList()
