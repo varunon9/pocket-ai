@@ -21,7 +21,7 @@ OpenAI GPT-3.5 powered free chatbot android app in Flutter similar to Chat-GPT
 | --- | --- |
 |![Conversation with bot - 1](./screenshots/conversation-with-bot-1.png) | ![Conversation with bot - 2](./screenshots/conversation-with-bot-2.png)|
 |![Settings Screen](./screenshots/pocket-ai-app-settings.png) | ![Content Generator Screen](./screenshots/pocket-ai-content-generator.png)|
-|![Todos Manager Screen 1](./screenshots/todos-manager-1.png) | ![Todos Manager Screen 2](./screenshots/todos-manager-2.png)|
+|![Todos Manager Screen 1](./screenshots/todos-manager-1.png) | ![AI Forum](./screenshots/ai-forum.png)|
 
 ## Getting Started
 
