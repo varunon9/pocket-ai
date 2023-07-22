@@ -112,7 +112,7 @@ class _AiForumScreen extends State<AiForumScreen> {
                   stream: onlineUserSessionsStream,
                   builder: (BuildContext context,
                       AsyncSnapshot<QuerySnapshot> snapshot) {
-                    return CustomText("${snapshot.data?.docs.length}");
+                    return CustomText("${snapshot.data?.docs.length ?? 0}");
                   })
             ],
           ),

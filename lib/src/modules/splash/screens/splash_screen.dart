@@ -18,7 +18,7 @@ class _SplashScreen extends State<SplashScreen> {
   Future<String> init() async {
     String? deviceId = await getDeviceId();
     Globals.deviceId = deviceId;
-    Globals.appSettings = await getAppSettingsFromSharedPres();
+    Globals.appSettings = await getAppSettingsFromSharedPrefs();
 
     if (deviceId != null) {
       FirebaseCrashlytics.instance.setUserIdentifier(deviceId);
